@@ -25,7 +25,7 @@ const defaultState = {
 
 const MS_PER_MINUTE = 60000;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
-const WORDS_PER_PASSAGE = 2;
+const ESTIMATED_WORDS_PER_PASSAGE = 2;
 const MIN_INTERVAL_MS = 900;
 
 let running = false;
@@ -70,16 +70,16 @@ function saveState(state) {
   localStorage.setItem("speedKidsState", JSON.stringify(state));
 }
 
+function calcAutoAdvanceInterval(wordsPerMinute) {
+  const passagesPerMinute = Math.max(wordsPerMinute / ESTIMATED_WORDS_PER_PASSAGE, 1);
+  return Math.max(MIN_INTERVAL_MS, Math.floor(MS_PER_MINUTE / passagesPerMinute));
+}
+
 function shuffle(list) {
   const copy = [...list];
   for (let i = copy.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-
-  function calcAutoAdvanceInterval(wordsPerMinute) {
-    const passagesPerMinute = Math.max(wordsPerMinute / WORDS_PER_PASSAGE, 1);
-    return Math.max(MIN_INTERVAL_MS, Math.floor(MS_PER_MINUTE / passagesPerMinute));
   }
   return copy;
 }
@@ -139,9 +139,14 @@ function applyDailyReward() {
   const state = loadState();
   const today = new Date().toISOString().slice(0, 10);
   const yesterday = new Date(Date.now() - MS_PER_DAY).toISOString().slice(0, 10);
+  const streakBonus = state.streak >= 7 ? 1 : 0;
+  starsToday = 1 + Math.floor(score / 200) + streakBonus;
 
   if (state.lastPlayedDate === today) {
-    starsToday = state.lastStarsToday || 0;
+    state.totalStars += starsToday;
+    state.bestScore = Math.max(state.bestScore, score);
+    state.lastStarsToday = starsToday;
+    saveState(state);
     return state;
   }
 
@@ -151,8 +156,7 @@ function applyDailyReward() {
     state.streak = 1;
   }
 
-  const streakBonus = state.streak >= 7 ? 1 : 0;
-  starsToday = 1 + Math.floor(score / 200) + streakBonus;
+  starsToday = 1 + Math.floor(score / 200) + (state.streak >= 7 ? 1 : 0);
   state.totalStars += starsToday;
   state.lastPlayedDate = today;
   state.bestScore = Math.max(state.bestScore, score);
