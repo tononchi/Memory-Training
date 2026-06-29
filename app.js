@@ -67,7 +67,11 @@ function loadState() {
 }
 
 function saveState(state) {
-  localStorage.setItem("speedKidsState", JSON.stringify(state));
+  try {
+    localStorage.setItem("speedKidsState", JSON.stringify(state));
+  } catch {
+    // Ignore write failures (e.g. storage disabled / quota exceeded).
+  }
 }
 
 function calcAutoAdvanceInterval(wordsPerMinute) {
