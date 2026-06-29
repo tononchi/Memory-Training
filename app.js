@@ -71,7 +71,13 @@ function saveState(state) {
 }
 
 function calcAutoAdvanceInterval(wordsPerMinute) {
-  const passagesPerMinute = Math.max(wordsPerMinute / AVG_WORDS_PER_PASSAGE, 1);
+  const list = passages[gradeSelect.value] || [];
+  const avgWordsPerPassage =
+    list.length === 0
+      ? 1
+      : list.reduce((sum, passage) => sum + passage.trim().split(/\s+/).length, 0) / list.length;
+
+  const passagesPerMinute = Math.max(wordsPerMinute / avgWordsPerPassage, 1);
   return Math.max(MIN_INTERVAL_MS, Math.floor(MS_PER_MINUTE / passagesPerMinute));
 }
 
