@@ -22,6 +22,10 @@ const defaultState = {
   bestScore: 0
 };
 
+const MS_PER_MINUTE = 60000;
+const WORDS_PER_PASSAGE_ESTIMATE = 2;
+const MIN_INTERVAL_MS = 900;
+
 let running = false;
 let timerId = null;
 let showId = null;
@@ -180,7 +184,10 @@ function startSession() {
   renderProgress();
 
   const wordsPerMinute = Number(speedRange.value);
-  const interval = Math.max(900, Math.floor(60000 / Math.max(wordsPerMinute / 2, 1)));
+  const interval = Math.max(
+    MIN_INTERVAL_MS,
+    Math.floor(MS_PER_MINUTE / Math.max(wordsPerMinute / WORDS_PER_PASSAGE_ESTIMATE, 1))
+  );
 
   showId = setInterval(() => {
     if (running) {
