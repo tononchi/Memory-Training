@@ -25,7 +25,7 @@ const defaultState = {
 
 const MS_PER_MINUTE = 60000;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
-const ESTIMATED_WORDS_PER_PASSAGE = 2;
+const AVG_WORDS_PER_PASSAGE = 2;
 const MIN_INTERVAL_MS = 900;
 
 let running = false;
@@ -71,7 +71,7 @@ function saveState(state) {
 }
 
 function calcAutoAdvanceInterval(wordsPerMinute) {
-  const passagesPerMinute = Math.max(wordsPerMinute / ESTIMATED_WORDS_PER_PASSAGE, 1);
+  const passagesPerMinute = Math.max(wordsPerMinute / AVG_WORDS_PER_PASSAGE, 1);
   return Math.max(MIN_INTERVAL_MS, Math.floor(MS_PER_MINUTE / passagesPerMinute));
 }
 
@@ -139,11 +139,10 @@ function applyDailyReward() {
   const state = loadState();
   const today = new Date().toISOString().slice(0, 10);
   const yesterday = new Date(Date.now() - MS_PER_DAY).toISOString().slice(0, 10);
-  const streakBonus = state.streak >= 7 ? 1 : 0;
-  starsToday = 1 + Math.floor(score / 200) + streakBonus;
 
   if (state.lastPlayedDate === today) {
-    state.totalStars += starsToday;
+    const currentSessionStars = 1 + Math.floor(score / 200) + (state.streak >= 7 ? 1 : 0);
+    starsToday = Math.max(state.lastStarsToday || 0, currentSessionStars);
     state.bestScore = Math.max(state.bestScore, score);
     state.lastStarsToday = starsToday;
     saveState(state);
