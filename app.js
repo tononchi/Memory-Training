@@ -143,12 +143,23 @@ function awardRead() {
 
 function applyDailyReward() {
   const state = loadState();
-  const today = new Date().toISOString().slice(0, 10);
-  const yesterday = new Date(Date.now() - MS_PER_DAY).toISOString().slice(0, 10);
+  const toLocalYMD = (d) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const today = toLocalYMD(new Date());
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const yesterday = toLocalYMD(yesterdayDate);
 
   if (state.lastPlayedDate === today) {
+    const prevStarsToday = state.lastStarsToday || 0;
     const currentSessionStars = 1 + Math.floor(score / 200) + (state.streak >= 7 ? 1 : 0);
-    starsToday = Math.max(state.lastStarsToday || 0, currentSessionStars);
+    starsToday = Math.max(prevStarsToday, currentSessionStars);
+    state.totalStars += starsToday - prevStarsToday;
     state.bestScore = Math.max(state.bestScore, score);
     state.lastStarsToday = starsToday;
     saveState(state);
