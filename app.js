@@ -25,7 +25,7 @@ const defaultState = {
 
 const MS_PER_MINUTE = 60000;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
-const WORDS_PER_PASSAGE_ESTIMATE = 2;
+const WORDS_PER_PASSAGE = 2;
 const MIN_INTERVAL_MS = 900;
 
 let running = false;
@@ -75,6 +75,11 @@ function shuffle(list) {
   for (let i = copy.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+
+  function calcAutoAdvanceInterval(wordsPerMinute) {
+    const passagesPerMinute = Math.max(wordsPerMinute / WORDS_PER_PASSAGE, 1);
+    return Math.max(MIN_INTERVAL_MS, Math.floor(MS_PER_MINUTE / passagesPerMinute));
   }
   return copy;
 }
@@ -188,10 +193,7 @@ function startSession() {
   renderProgress();
 
   const wordsPerMinute = Number(speedRange.value);
-  const interval = Math.max(
-    MIN_INTERVAL_MS,
-    Math.floor(MS_PER_MINUTE / Math.max(wordsPerMinute / WORDS_PER_PASSAGE_ESTIMATE, 1))
-  );
+  const interval = calcAutoAdvanceInterval(wordsPerMinute);
 
   showId = setInterval(() => {
     if (running) {
