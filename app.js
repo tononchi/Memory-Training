@@ -19,10 +19,12 @@ const defaultState = {
   streak: 0,
   lastPlayedDate: "",
   totalStars: 0,
-  bestScore: 0
+  bestScore: 0,
+  lastStarsToday: 0
 };
 
 const MS_PER_MINUTE = 60000;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const WORDS_PER_PASSAGE_ESTIMATE = 2;
 const MIN_INTERVAL_MS = 900;
 
@@ -131,9 +133,10 @@ function awardRead() {
 function applyDailyReward() {
   const state = loadState();
   const today = new Date().toISOString().slice(0, 10);
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - MS_PER_DAY).toISOString().slice(0, 10);
 
   if (state.lastPlayedDate === today) {
+    starsToday = state.lastStarsToday || 0;
     return state;
   }
 
@@ -148,6 +151,7 @@ function applyDailyReward() {
   state.totalStars += starsToday;
   state.lastPlayedDate = today;
   state.bestScore = Math.max(state.bestScore, score);
+  state.lastStarsToday = starsToday;
   saveState(state);
   return state;
 }
