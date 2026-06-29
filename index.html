@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>よむよむスピードトレーニング</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <h1>🌈 よむよむスピードトレーニング</h1>
+    <p class="subtitle">小学校1〜2年生むけ</p>
+
+    <section class="panel controls">
+      <label>
+        がくねん
+        <select id="gradeSelect">
+          <option value="1">1ねんせい</option>
+          <option value="2">2ねんせい</option>
+        </select>
+      </label>
+      <label>
+        ひょうじスピード（ことば/ふん）
+        <input id="speedRange" type="range" min="80" max="240" step="20" value="120" />
+        <span id="speedValue">120</span>
+      </label>
+      <button id="startBtn">スタート！</button>
+    </section>
+
+    <section class="panel training">
+      <div class="timer">のこり: <span id="timeLeft">60</span>びょう</div>
+      <div id="passage" class="passage">スタートをおしてね！</div>
+      <button id="nextBtn" disabled>よめた！つぎへ</button>
+    </section>
+
+    <section class="panel score">
+      <h2>スコア</h2>
+      <p>ポイント: <span id="score">0</span></p>
+      <p>れんぞくボーナス: <span id="combo">0</span></p>
+      <p>よんだぶん: <span id="count">0</span></p>
+      <p>きょうのほし: <span id="starsToday">0</span></p>
+    </section>
+
+    <section class="panel streak">
+      <h2>まいにちチャレンジ</h2>
+      <p>れんぞく日数: <span id="streak">0</span>日</p>
+      <p>トータルほし: <span id="totalStars">0</span>こ</p>
+      <p>ベストスコア: <span id="bestScore">0</span></p>
+      <div id="badges" class="badges"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
