@@ -1,0 +1,1903 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>よむよむスピードトレーニング</title>
+  <style>
+:root {
+  --pink: #ff5ea8;
+  --yellow: #ffe55c;
+  --blue: #5cd7ff;
+  --green: #66e29f;
+  --text: #2e2a5a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  color: var(--text);
+  background: linear-gradient(135deg, #fff7d6, #dff8ff 45%, #ffe4f5);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  text-align: center;
+  color: #ff2a8b;
+  margin-bottom: 0;
+}
+
+.subtitle {
+  text-align: center;
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.panel {
+  background: #ffffffcc;
+  border-radius: 18px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 3px solid #ffffff;
+  box-shadow: 0 8px 18px rgba(41, 35, 92, 0.12);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+label {
+  font-weight: 700;
+  display: grid;
+  gap: 8px;
+}
+
+select,
+input[type="range"],
+button {
+  font-size: 1.05rem;
+}
+
+button {
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(90deg, var(--pink), #ff8c2f);
+  color: white;
+  font-weight: 700;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.train-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.progress-line {
+  font-weight: 700;
+  color: #4b3fbf;
+}
+
+.review-tag {
+  margin-left: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), #8be0ff);
+  color: #0a4a66;
+  font-size: 0.9rem;
+}
+
+.timer {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #098d7a;
+}
+
+.passage {
+  margin: 14px 0;
+  padding: 18px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #fff, #f7f1ff);
+  border: 3px dashed #b29fff;
+  font-size: clamp(1.4rem, 3.2vw, 2rem);
+  line-height: 1.9;
+  min-height: 140px;
+}
+
+.train-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.model-btn {
+  background: linear-gradient(90deg, var(--blue), #3aa7d6);
+}
+
+#readBtn {
+  flex: 1;
+  min-width: 160px;
+  font-size: 1.2rem;
+}
+
+.feedback {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.feedback-q {
+  font-weight: 700;
+}
+
+.feedback .fluent {
+  background: linear-gradient(90deg, var(--green), #2fc77f);
+}
+
+.feedback .stumble {
+  background: linear-gradient(90deg, #ffb35c, #ff8c2f);
+}
+
+.improve-note {
+  margin-top: 12px;
+  font-weight: 700;
+  color: #c2266f;
+  font-size: 1.1rem;
+  min-height: 1.4em;
+}
+
+.quiz {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #f3fbff;
+  border: 2px solid var(--blue);
+}
+
+.quiz-q {
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin: 0 0 10px;
+}
+
+.quiz-choices {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.quiz-choice {
+  background: linear-gradient(90deg, #8a7bff, #6a5cff);
+  min-width: 120px;
+}
+
+.quiz-choice.correct {
+  background: linear-gradient(90deg, var(--green), #2fc77f);
+}
+
+.quiz-choice.wrong {
+  background: linear-gradient(90deg, #ff8a8a, #ff5c5c);
+}
+
+.quiz-result {
+  margin: 10px 0 0;
+  font-weight: 700;
+}
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 4px 16px;
+}
+
+.score p,
+.streak p {
+  font-size: 1.1rem;
+  margin: 8px 0;
+}
+
+.hint {
+  font-size: 0.95rem;
+  color: #6a6597;
+  margin-top: 6px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--yellow), #ffc768);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.note {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #ffffffaa;
+  font-size: 0.9rem;
+  color: #555079;
+  line-height: 1.7;
+}
+
+.note a {
+  color: #c2266f;
+  font-weight: 700;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>🌈 よむよむスピードトレーニング</h1>
+    <p class="subtitle">小学校1〜2年生むけ｜くりかえし よんで すらすらに</p>
+
+    <section class="panel controls">
+      <label>
+        もんだい
+        <select id="setSelect">
+          <optgroup label="1ねんせい">
+            <option value="1-hiragana">ひらがな</option>
+            <option value="1-katakana">カタカナ入り</option>
+            <option value="1-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="2ねんせい">
+            <option value="2-hiragana">ひらがな</option>
+            <option value="2-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="3ねんせい">
+            <option value="3-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="4ねんせい">
+            <option value="4-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="5ねんせい">
+            <option value="5-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="6ねんせい">
+            <option value="6-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="おとな（こどもと いっしょに）">
+            <option value="adult">大人むけ（中学いじょうの 漢字）</option>
+          </optgroup>
+        </select>
+      </label>
+      <label>
+        くりかえす かいすう
+        <select id="repeatSelect">
+          <option value="2">2かい</option>
+          <option value="3" selected>3かい</option>
+          <option value="4">4かい</option>
+        </select>
+      </label>
+      <label>
+        おてほんスピード
+        <input id="modelRange" type="range" min="0.6" max="1.1" step="0.1" value="0.8" />
+        <span id="modelValue">ふつう</span>
+      </label>
+      <button id="startBtn">スタート！</button>
+    </section>
+
+    <section class="panel training">
+      <div class="train-head">
+        <div class="progress-line">
+          ぶん <span id="passageIndex">0</span>/<span id="passageTotal">0</span>
+          ・ くりかえし <span id="repeatIndex">0</span>/<span id="repeatTotal">0</span>
+          <span id="reviewTag" class="review-tag hidden">💫 ふくしゅう</span>
+        </div>
+        <div class="timer">じかん: <span id="elapsed">0</span>びょう</div>
+      </div>
+
+      <div id="passage" class="passage">スタートを おしてね！</div>
+
+      <div class="train-actions">
+        <button id="modelBtn" class="model-btn" disabled>🔊 おてほんを きく</button>
+        <button id="readBtn" disabled>よめた！</button>
+      </div>
+
+      <div id="feedback" class="feedback hidden">
+        <span class="feedback-q">すらすら よめた？</span>
+        <button id="fluentBtn" class="fluent">😄 すらすら</button>
+        <button id="stumbleBtn" class="stumble">😅 つっかえた</button>
+      </div>
+
+      <p id="improveNote" class="improve-note hidden"></p>
+
+      <div id="quiz" class="quiz hidden">
+        <p class="quiz-q" id="quizQuestion"></p>
+        <div class="quiz-choices" id="quizChoices"></div>
+        <p id="quizResult" class="quiz-result hidden"></p>
+      </div>
+    </section>
+
+    <section class="panel score">
+      <h2>こんかいの きろく</h2>
+      <div class="score-grid">
+        <p>ポイント: <span id="score">0</span></p>
+        <p>れんぞく: <span id="combo">0</span></p>
+        <p>よんだぶん: <span id="count">0</span></p>
+        <p>よむ はやさ: <span id="wpm">0</span> ことば/ふん</p>
+        <p>すらすら度: <span id="accuracy">0</span>%</p>
+        <p>りかい: <span id="comprehension">0/0</span></p>
+        <p>きょうの ほし: <span id="starsToday">0</span></p>
+      </div>
+      <p class="hint">※ はやさは「きょうの じぶん」のきろく。きのうの じぶんと くらべて のびれば はなまる！</p>
+    </section>
+
+    <section class="panel streak">
+      <h2>まいにちチャレンジ</h2>
+      <p>れんぞく日数: <span id="streak">0</span>日</p>
+      <p>トータルほし: <span id="totalStars">0</span>こ</p>
+      <p>ベストスコア: <span id="bestScore">0</span></p>
+      <div id="badges" class="badges"></div>
+    </section>
+
+    <footer class="note">
+      <p>
+        おうちの方・先生へ：本アプリは「反復読み（Repeated Reading）＋お手本提示＋理解確認」を軸に、
+        速度を強制せず<strong>正確さと理解を伴った“結果としての速さ”</strong>を育てる設計です。
+        教室・家庭では声に出す音読と内容確認の併用を推奨します。
+        設計根拠は docs/speed-reading-research.md（リポジトリ参照） を参照してください。
+      </p>
+    </footer>
+  </main>
+
+  <script>
+// 1年生の問題（ひらがな / カタカナ入り / かんじ入り）
+// app.js より先に読み込むこと。window.PASSAGE_SETS に登録する。
+// かんじ入りは第1学年の80字のみを使用（docs/kanji-by-grade.md）。
+window.PASSAGE_SETS = Object.assign(window.PASSAGE_SETS || {}, {
+  "1-hiragana": {
+    label: "1年 ひらがな",
+    items: [
+      {
+        id: "1h-1",
+        text: "きょうは あさから そらが ぴかぴか はれです。",
+        q: { ask: "そらは どうだった？", choices: ["はれ", "あめ"], answer: 0 }
+      },
+      {
+        id: "1h-2",
+        text: "あかい くるまが みちを すいすい はしります。",
+        q: { ask: "くるまは なにいろ？", choices: ["あお", "あか"], answer: 1 }
+      },
+      {
+        id: "1h-3",
+        text: "ねこが まどべで ひなたぼっこを しています。",
+        q: { ask: "なにが ひなたぼっこ してる？", choices: ["ねこ", "いぬ"], answer: 0 }
+      },
+      {
+        id: "1h-4",
+        text: "こうえんで ともだちと おにごっこを しました。",
+        q: { ask: "どこで あそんだ？", choices: ["こうえん", "がっこう"], answer: 0 }
+      },
+      {
+        id: "1h-5",
+        text: "おみせで あまい いちごを かいました。",
+        q: { ask: "なにを かった？", choices: ["みかん", "いちご"], answer: 1 }
+      }
+    ]
+  },
+  "1-katakana": {
+    label: "1年 カタカナ入り",
+    items: [
+      {
+        id: "1k-1",
+        text: "ライオンが おおきな こえで ほえました。",
+        q: { ask: "なにが ほえた？", choices: ["ライオン", "ねこ"], answer: 0 }
+      },
+      {
+        id: "1k-2",
+        text: "おやつに バナナと トマトを たべました。",
+        q: { ask: "おやつは なに？", choices: ["バナナと トマト", "パンと たまご"], answer: 0 }
+      },
+      {
+        id: "1k-3",
+        text: "テレビで サッカーの しあいを みました。",
+        q: { ask: "テレビで なにを みた？", choices: ["サッカー", "アニメ"], answer: 0 }
+      },
+      {
+        id: "1k-4",
+        text: "あかい ボールを ともだちに パスしました。",
+        q: { ask: "ボールは なにいろ？", choices: ["あか", "あお"], answer: 0 }
+      },
+      {
+        id: "1k-5",
+        text: "コップに つめたい ジュースを いれました。",
+        q: { ask: "コップに なにを いれた？", choices: ["ジュース", "おちゃ"], answer: 0 }
+      }
+    ]
+  },
+  "1-kanji": {
+    label: "1年 かんじ入り",
+    items: [
+      {
+        id: "1j-1",
+        text: "天気が よくて 青い 空が 見える。",
+        q: { ask: "そらは どんな いろ？", choices: ["青い", "赤い"], answer: 0 }
+      },
+      {
+        id: "1j-2",
+        text: "犬と 子犬が 川の 水を のむ。",
+        q: { ask: "なにが 水を のむ？", choices: ["犬", "とり"], answer: 0 }
+      },
+      {
+        id: "1j-3",
+        text: "学校の 大きな 木に 花が さく。",
+        q: { ask: "木に なにが さく？", choices: ["花", "み"], answer: 0 }
+      },
+      {
+        id: "1j-4",
+        text: "森の 中で 白い 花を 見つけた。",
+        q: { ask: "森で なにを 見つけた？", choices: ["白い 花", "赤い み"], answer: 0 }
+      },
+      {
+        id: "1j-5",
+        text: "夕やけで 山が 赤く なる。",
+        q: { ask: "山は なにいろに なった？", choices: ["赤", "青"], answer: 0 }
+      },
+      {
+        id: "1j-6",
+        text: "王さまの 右手に 金の 玉。",
+        q: { ask: "金の 玉は どこ？", choices: ["右手", "左手"], answer: 0 }
+      },
+      {
+        id: "1j-7",
+        text: "村の 男の人が 田に 入る。",
+        q: { ask: "だれが 田に 入る？", choices: ["男の人", "女の子"], answer: 0 }
+      },
+      {
+        id: "1j-8",
+        text: "先生が 早口で 名を よぶ。",
+        q: { ask: "先生は どう よんだ？", choices: ["早口", "小ごえ"], answer: 0 }
+      },
+      {
+        id: "1j-9",
+        text: "一年生が 六人 休む。",
+        q: { ask: "なん人 休んだ？", choices: ["六人", "二人"], answer: 0 }
+      },
+      {
+        id: "1j-10",
+        text: "七つの 貝と 八つの 石。",
+        q: { ask: "貝は いくつ？", choices: ["七つ", "八つ"], answer: 0 }
+      },
+      {
+        id: "1j-11",
+        text: "雨の 日は 草が ぬれる。",
+        q: { ask: "雨で なにが ぬれる？", choices: ["草", "火"], answer: 0 }
+      },
+      {
+        id: "1j-12",
+        text: "左の 耳に 音が きこえる。",
+        q: { ask: "どこで 音を きく？", choices: ["左の 耳", "右の 手"], answer: 0 }
+      },
+      {
+        id: "1j-13",
+        text: "糸と 竹で 文字を かく。",
+        q: { ask: "なにで かく？", choices: ["糸と 竹", "水と 火"], answer: 0 }
+      },
+      {
+        id: "1j-14",
+        text: "三、四、五、九、十と 大きな こえで かぞえる。",
+        q: { ask: "どう かぞえた？", choices: ["大きな こえ", "小さな こえ"], answer: 0 }
+      },
+      {
+        id: "1j-15",
+        text: "百円玉と 千円さつを 出す。",
+        q: { ask: "なにを 出した？", choices: ["お金", "本"], answer: 0 }
+      },
+      {
+        id: "1j-16",
+        text: "火と 水で りょうりを する。",
+        q: { ask: "なにを つかう？", choices: ["火と 水", "土と 石"], answer: 0 }
+      },
+      {
+        id: "1j-17",
+        text: "二人で 上を 見て、月を 見る。",
+        q: { ask: "なにを 見た？", choices: ["月", "花"], answer: 0 }
+      },
+      {
+        id: "1j-18",
+        text: "正しい 字を 目で 見て かく。",
+        q: { ask: "なにで 見る？", choices: ["目", "耳"], answer: 0 }
+      },
+      {
+        id: "1j-19",
+        text: "車の 中で 本を よむ。",
+        q: { ask: "どこで よむ？", choices: ["車の 中", "木の 上"], answer: 0 }
+      },
+      {
+        id: "1j-20",
+        text: "小さな 女の子が 立つ。",
+        q: { ask: "だれが 立つ？", choices: ["女の子", "男の人"], answer: 0 }
+      },
+      {
+        id: "1j-21",
+        text: "力を 入れて、足で ける。",
+        q: { ask: "なにで ける？", choices: ["足", "手"], answer: 0 }
+      },
+      {
+        id: "1j-22",
+        text: "林と 町の あいだに 田。",
+        q: { ask: "林と 町の あいだに なに？", choices: ["田", "川"], answer: 0 }
+      },
+      {
+        id: "1j-23",
+        text: "土の 中に 虫が いる。",
+        q: { ask: "土の 中に なにが いる？", choices: ["虫", "貝"], answer: 0 }
+      },
+      {
+        id: "1j-24",
+        text: "木の 下で 犬が ねる。",
+        q: { ask: "どこで ねる？", choices: ["木の 下", "川の 中"], answer: 0 }
+      }
+    ]
+  }
+});
+
+  </script>
+  <script>
+// 2年生の問題（ひらがな / かんじ入り）
+// app.js より先に読み込むこと。window.PASSAGE_SETS に登録する。
+// かんじ入りは第1〜2学年の漢字のみを使用（docs/kanji-by-grade.md）。
+window.PASSAGE_SETS = Object.assign(window.PASSAGE_SETS || {}, {
+  "2-hiragana": {
+    label: "2年 ひらがな",
+    items: [
+      {
+        id: "2h-1",
+        text: "しゅくだいを おえたら、じぶんで つぎの もんだいに ちょうせんします。",
+        q: { ask: "しゅくだいの あとは どうする？", choices: ["つぎに ちょうせん", "ねる"], answer: 0 }
+      },
+      {
+        id: "2h-2",
+        text: "はやく よむだけでなく、ないようを おもいだせるか たしかめます。",
+        q: { ask: "たいせつなのは？", choices: ["はやさだけ", "ないようも"], answer: 1 }
+      },
+      {
+        id: "2h-3",
+        text: "ともだちと くらべるより きのうの じぶんより せいちょうするのが だいじです。",
+        q: { ask: "だれと くらべる？", choices: ["きのうの じぶん", "ともだち"], answer: 0 }
+      },
+      {
+        id: "2h-4",
+        text: "みじかい ぶんを くりかえし よむと、しぜんに ながく よめるように なります。",
+        q: { ask: "どう よむと よくなる？", choices: ["くりかえし よむ", "いちど だけ"], answer: 0 }
+      },
+      {
+        id: "2h-5",
+        text: "きょうの がんばりを ほしで ためて、れんぞく ちゃれんじを つづけましょう。",
+        q: { ask: "なにを ためる？", choices: ["ほし", "おかね"], answer: 0 }
+      }
+    ]
+  },
+  "2-kanji": {
+    label: "2年 かんじ入り",
+    items: [
+      {
+        id: "2j-1",
+        text: "朝、兄と 弟が 公園まで 走る。",
+        q: { ask: "だれと 走った？", choices: ["兄と 弟", "母と 父"], answer: 0 }
+      },
+      {
+        id: "2j-2",
+        text: "新しい 本を 買って、毎日 読む。",
+        q: { ask: "新しい 本を どうする？", choices: ["毎日 読む", "しまう"], answer: 0 }
+      },
+      {
+        id: "2j-3",
+        text: "理科の 時間に 池の 魚を 数える。",
+        q: { ask: "池で なにを 数える？", choices: ["魚", "とり"], answer: 0 }
+      },
+      {
+        id: "2j-4",
+        text: "母と 市場で 野さいを 買う。",
+        q: { ask: "市場で なにを 買う？", choices: ["野さい", "おかし"], answer: 0 }
+      },
+      {
+        id: "2j-5",
+        text: "音楽の 時間に みんなで 歌を 歌う。",
+        q: { ask: "音楽の 時間に なにを する？", choices: ["歌を 歌う", "本を 読む"], answer: 0 }
+      },
+      {
+        id: "2j-6",
+        text: "夏の 海で 強い 風が ふく。",
+        q: { ask: "海で なにが ふく？", choices: ["強い 風", "雪"], answer: 0 }
+      },
+      {
+        id: "2j-7",
+        text: "遠くの 空に 黒い 雲。",
+        q: { ask: "空に なにが ある？", choices: ["黒い 雲", "星"], answer: 0 }
+      },
+      {
+        id: "2j-8",
+        text: "星と 光が きれいな 夜。",
+        q: { ask: "いつ？", choices: ["夜", "昼"], answer: 0 }
+      },
+      {
+        id: "2j-9",
+        text: "晴れた 昼に 鳥が 鳴く。",
+        q: { ask: "鳥は どうする？", choices: ["鳴く", "ねる"], answer: 0 }
+      },
+      {
+        id: "2j-10",
+        text: "岩の あいだから 雪どけ水が ながれる。",
+        q: { ask: "岩から なにが？", choices: ["水", "火"], answer: 0 }
+      },
+      {
+        id: "2j-11",
+        text: "姉と 妹が 家で あそぶ。",
+        q: { ask: "だれが あそぶ？", choices: ["姉と 妹", "父と 母"], answer: 0 }
+      },
+      {
+        id: "2j-12",
+        text: "父と 母は 親せきの 会に 行く。",
+        q: { ask: "どこへ 行く？", choices: ["親せきの 会", "学校"], answer: 0 }
+      },
+      {
+        id: "2j-13",
+        text: "友だちの 顔を 見て 話す。",
+        q: { ask: "なにを 見る？", choices: ["顔", "手"], answer: 0 }
+      },
+      {
+        id: "2j-14",
+        text: "弱い 牛を 強く そだてる。",
+        q: { ask: "牛を どう する？", choices: ["強く そだてる", "売る"], answer: 0 }
+      },
+      {
+        id: "2j-15",
+        text: "国語と 算数を 教わる。",
+        q: { ask: "なにを ならう？", choices: ["国語と 算数", "音楽"], answer: 0 }
+      },
+      {
+        id: "2j-16",
+        text: "古い 本を 読んで 記おくする。",
+        q: { ask: "古い 本を どうする？", choices: ["読む", "すてる"], answer: 0 }
+      },
+      {
+        id: "2j-17",
+        text: "図を 見て 形を 考える。",
+        q: { ask: "なにを 考える？", choices: ["形", "色"], answer: 0 }
+      },
+      {
+        id: "2j-18",
+        text: "半分の 米を 計りで はかる。",
+        q: { ask: "なにを はかる？", choices: ["米", "水"], answer: 0 }
+      },
+      {
+        id: "2j-19",
+        text: "太い 線を 引く。",
+        q: { ask: "どんな 線？", choices: ["太い", "細い"], answer: 0 }
+      },
+      {
+        id: "2j-20",
+        text: "丸い 形を 紙に 画く。",
+        q: { ask: "どんな 形？", choices: ["丸い", "四角い"], answer: 0 }
+      },
+      {
+        id: "2j-21",
+        text: "汽車に のって 京へ 行く。",
+        q: { ask: "なにに のる？", choices: ["汽車", "船"], answer: 0 }
+      },
+      {
+        id: "2j-22",
+        text: "船で 海を 西へ すすむ。",
+        q: { ask: "どっちへ すすむ？", choices: ["西", "東"], answer: 0 }
+      },
+      {
+        id: "2j-23",
+        text: "電車で 東の 店へ 行く。",
+        q: { ask: "どこへ？", choices: ["店", "家"], answer: 0 }
+      },
+      {
+        id: "2j-24",
+        text: "南北に のびる 道を 歩く。",
+        q: { ask: "どの 道？", choices: ["南北の 道", "川"], answer: 0 }
+      },
+      {
+        id: "2j-25",
+        text: "交ばんの 前で 止まる。",
+        q: { ask: "どこで 止まる？", choices: ["交ばんの 前", "こうえん"], answer: 0 }
+      },
+      {
+        id: "2j-26",
+        text: "広い 道に 来る 牛。",
+        q: { ask: "どんな 道？", choices: ["広い", "せまい"], answer: 0 }
+      },
+      {
+        id: "2j-27",
+        text: "頭と 首を 体そうで うごかす。",
+        q: { ask: "なにを うごかす？", choices: ["頭と 首", "手だけ"], answer: 0 }
+      },
+      {
+        id: "2j-28",
+        text: "肉と 麦を 食べて 元気に なる。",
+        q: { ask: "なにを 食べる？", choices: ["肉と 麦", "くだもの"], answer: 0 }
+      },
+      {
+        id: "2j-29",
+        text: "心ぞうの 音を 聞く。",
+        q: { ask: "なんの 音？", choices: ["心ぞう", "電車"], answer: 0 }
+      },
+      {
+        id: "2j-30",
+        text: "こわれた 戸を 直す。",
+        q: { ask: "なにを 直す？", choices: ["戸", "本"], answer: 0 }
+      },
+      {
+        id: "2j-31",
+        text: "同じ 答えを 言う。",
+        q: { ask: "どんな 答え？", choices: ["同じ", "ちがう"], answer: 0 }
+      },
+      {
+        id: "2j-32",
+        text: "刀で 竹を 切る。",
+        q: { ask: "なにで 切る？", choices: ["刀", "はさみ"], answer: 0 }
+      },
+      {
+        id: "2j-33",
+        text: "色えんぴつで 絵を かく。",
+        q: { ask: "なにで かく？", choices: ["色えんぴつ", "ふで"], answer: 0 }
+      },
+      {
+        id: "2j-34",
+        text: "毎日 弓と 矢を 用いる。",
+        q: { ask: "なにを つかう？", choices: ["弓と 矢", "ぼうし"], answer: 0 }
+      },
+      {
+        id: "2j-35",
+        text: "今日は 曜日を 知る。",
+        q: { ask: "なにを 知る？", choices: ["曜日", "名前"], answer: 0 }
+      },
+      {
+        id: "2j-36",
+        text: "秋と 冬は 夜が 長い。",
+        q: { ask: "夜は どう？", choices: ["長い", "みじかい"], answer: 0 }
+      },
+      {
+        id: "2j-37",
+        text: "週に 一回 海へ 行く。",
+        q: { ask: "どのくらい 行く？", choices: ["週に 一回", "毎日"], answer: 0 }
+      },
+      {
+        id: "2j-38",
+        text: "工作で 角を つくる。",
+        q: { ask: "なにを つくる？", choices: ["角", "円"], answer: 0 }
+      },
+      {
+        id: "2j-39",
+        text: "大きな 声で 歌う。",
+        q: { ask: "どんな 声？", choices: ["大きな", "小さな"], answer: 0 }
+      },
+      {
+        id: "2j-40",
+        text: "少しの 麦を 分ける。",
+        q: { ask: "どれだけ 分ける？", choices: ["少し", "ぜんぶ"], answer: 0 }
+      },
+      {
+        id: "2j-41",
+        text: "番ごうを 黒ばんに 書く。",
+        q: { ask: "なにを 書く？", choices: ["番ごう", "絵"], answer: 0 }
+      },
+      {
+        id: "2j-42",
+        text: "原っぱで 馬が 草を 食べる。",
+        q: { ask: "なにが 草を 食べる？", choices: ["馬", "牛"], answer: 0 }
+      },
+      {
+        id: "2j-43",
+        text: "午後に 売り場へ 行く。",
+        q: { ask: "いつ 行く？", choices: ["午後", "朝"], answer: 0 }
+      },
+      {
+        id: "2j-44",
+        text: "室内で 図かんを 外より 見る。",
+        q: { ask: "どこで 見る？", choices: ["室内", "外"], answer: 0 }
+      },
+      {
+        id: "2j-45",
+        text: "地めんに 矢を さす。",
+        q: { ask: "どこに さす？", choices: ["地めん", "空"], answer: 0 }
+      },
+      {
+        id: "2j-46",
+        text: "台の 上で 茶を いれる。",
+        q: { ask: "なにを いれる？", choices: ["茶", "水"], answer: 0 }
+      },
+      {
+        id: "2j-47",
+        text: "むかしを 思い出す。",
+        q: { ask: "なにを する？", choices: ["思い出す", "わすれる"], answer: 0 }
+      },
+      {
+        id: "2j-48",
+        text: "寺の 門を くぐり、谷を こえる。",
+        q: { ask: "なにを くぐる？", choices: ["門", "戸"], answer: 0 }
+      },
+      {
+        id: "2j-49",
+        text: "会社の 工場で はたらく。",
+        q: { ask: "どこで はたらく？", choices: ["工場", "家"], answer: 0 }
+      },
+      {
+        id: "2j-50",
+        text: "明るい 声で わらう。",
+        q: { ask: "どんな 声？", choices: ["明るい", "くらい"], answer: 0 }
+      },
+      {
+        id: "2j-51",
+        text: "黄色の 花が さく 夏。",
+        q: { ask: "なにいろの 花？", choices: ["黄色", "青"], answer: 0 }
+      },
+      {
+        id: "2j-52",
+        text: "何回も 同じ 道を 行く。",
+        q: { ask: "どんな 道？", choices: ["同じ 道", "ちがう 道"], answer: 0 }
+      },
+      {
+        id: "2j-53",
+        text: "細い 糸で 羽を つくる。",
+        q: { ask: "なにで つくる？", choices: ["細い 糸", "太い ぼう"], answer: 0 }
+      },
+      {
+        id: "2j-54",
+        text: "自分の 名前を 大きく 書く。",
+        q: { ask: "なにを 書く？", choices: ["名前", "数字"], answer: 0 }
+      },
+      {
+        id: "2j-55",
+        text: "多くの 人が 谷を わたる。",
+        q: { ask: "どこを わたる？", choices: ["谷", "海"], answer: 0 }
+      },
+      {
+        id: "2j-56",
+        text: "元気な 馬が 野原を 走る。",
+        q: { ask: "どこを 走る？", choices: ["野原", "町"], answer: 0 }
+      },
+      {
+        id: "2j-57",
+        text: "元気に 活やくする 兄。",
+        q: { ask: "兄は どう？", choices: ["活やく", "休む"], answer: 0 }
+      },
+      {
+        id: "2j-58",
+        text: "近くの 高い 山に のぼる。",
+        q: { ask: "どんな 山？", choices: ["高い", "ひくい"], answer: 0 }
+      },
+      {
+        id: "2j-59",
+        text: "二人の 力を 合わせる。",
+        q: { ask: "力を どう する？", choices: ["合わせる", "ぬく"], answer: 0 }
+      },
+      {
+        id: "2j-60",
+        text: "九才の 妹が わらう。",
+        q: { ask: "妹は なん才？", choices: ["九才", "十才"], answer: 0 }
+      },
+      {
+        id: "2j-61",
+        text: "春に なって 花が さく。",
+        q: { ask: "いつ 花が さく？", choices: ["春", "冬"], answer: 0 }
+      },
+      {
+        id: "2j-62",
+        text: "赤組と 白組に 分かれる。",
+        q: { ask: "なん組に 分かれる？", choices: ["赤組と 白組", "一組だけ"], answer: 0 }
+      },
+      {
+        id: "2j-63",
+        text: "学校へ 通う 道。",
+        q: { ask: "どこへ 通う？", choices: ["学校", "店"], answer: 0 }
+      },
+      {
+        id: "2j-64",
+        text: "点と 線を つなぐ。",
+        q: { ask: "なにを つなぐ？", choices: ["点と 線", "丸"], answer: 0 }
+      },
+      {
+        id: "2j-65",
+        text: "光を 顔に 当てる。",
+        q: { ask: "なにを 当てる？", choices: ["光", "水"], answer: 0 }
+      },
+      {
+        id: "2j-66",
+        text: "北の 方角を しらべる。",
+        q: { ask: "どっちの 方角？", choices: ["北", "南"], answer: 0 }
+      },
+      {
+        id: "2j-67",
+        text: "一万円の 本を 見る。",
+        q: { ask: "いくらの 本？", choices: ["一万円", "百円"], answer: 0 }
+      },
+      {
+        id: "2j-68",
+        text: "毛糸で あんで つくる。",
+        q: { ask: "なにで つくる？", choices: ["毛糸", "紙"], answer: 0 }
+      },
+      {
+        id: "2j-69",
+        text: "山里に すむ。",
+        q: { ask: "どこに すむ？", choices: ["山里", "海べ"], answer: 0 }
+      },
+      {
+        id: "2j-70",
+        text: "学校から 家に 帰る。",
+        q: { ask: "どこに 帰る？", choices: ["家", "店"], answer: 0 }
+      }
+    ]
+  }
+});
+
+  </script>
+  <script>
+// 中学年・高学年（小3〜6）の問題（かんじ入り）
+// 文献調査により、反復読み型の本アプリの手法は高学年(小6)まで有効とされる（docs/reading-by-grade-band.md）。
+// 各学年は累積（1〜その学年）の配当漢字のみ使用（docs/kanji-by-grade.md）。
+// app.js より先に読み込むこと。window.PASSAGE_SETS に登録する。
+window.PASSAGE_SETS = Object.assign(window.PASSAGE_SETS || {}, {
+  "3-kanji": {
+    label: "3年 かんじ入り",
+    items: [
+      {
+        id: "3j-1",
+        text: "毎朝 公園で 軽く 運動して、息を ととのえる。",
+        q: { ask: "いつ 運動する？", choices: ["毎朝", "夜"], answer: 0 }
+      },
+      {
+        id: "3j-2",
+        text: "図書館で 美しい 詩を 読んで、感想を 書く。",
+        q: { ask: "どこで 読んだ？", choices: ["図書館", "公園"], answer: 0 }
+      },
+      {
+        id: "3j-3",
+        text: "医者が 病院で 病気を 調べて、薬を 出す。",
+        q: { ask: "だれが 調べる？", choices: ["医者", "先生"], answer: 0 }
+      },
+      {
+        id: "3j-4",
+        text: "鉄橋を 列車が 速く 通り、駅に 着く。",
+        q: { ask: "なにが 通る？", choices: ["列車", "船"], answer: 0 }
+      },
+      {
+        id: "3j-5",
+        text: "農家の 畑で 豆と 緑の 葉が 育つ。",
+        q: { ask: "どこで 育つ？", choices: ["畑", "海"], answer: 0 }
+      },
+      {
+        id: "3j-6",
+        text: "勝負に 負けても、次の 練習で 全力を 出す。",
+        q: { ask: "負けたら どうする？", choices: ["練習する", "あきらめる"], answer: 0 }
+      },
+      {
+        id: "3j-7",
+        text: "湖の 岸で 氷を 見つけ、寒さに おどろく。",
+        q: { ask: "どこで 見つけた？", choices: ["湖の 岸", "山の 上"], answer: 0 }
+      },
+      {
+        id: "3j-8",
+        text: "係の 仕事として、教室の 整とんを 受け持つ。",
+        q: { ask: "なにを 受け持つ？", choices: ["整とん", "そうじ"], answer: 0 }
+      },
+      {
+        id: "3j-9",
+        text: "幸せな 気持ちで、世界の 国々を 旅する。",
+        q: { ask: "なにを する？", choices: ["旅", "勉強"], answer: 0 }
+      },
+      {
+        id: "3j-10",
+        text: "商店の 主人が よい 品物を 安く 売る。",
+        q: { ask: "だれが 売る？", choices: ["主人", "客"], answer: 0 }
+      },
+      {
+        id: "3j-11",
+        text: "委員会で 来週の 行事を 相談して 決める。",
+        q: { ask: "なにを 決める？", choices: ["行事", "ねだん"], answer: 0 }
+      },
+      {
+        id: "3j-12",
+        text: "太陽の 光を 受けて、暗い 部屋が 明るく なる。",
+        q: { ask: "部屋は どう なった？", choices: ["明るく", "暗く"], answer: 0 }
+      }
+    ]
+  },
+  "4-kanji": {
+    label: "4年 かんじ入り",
+    items: [
+      {
+        id: "4j-1",
+        text: "委員会で 出た 課題を、各自が 協力して 改ぜんする。",
+        q: { ask: "だれが 改ぜんする？", choices: ["各自", "先生"], answer: 0 }
+      },
+      {
+        id: "4j-2",
+        text: "選手が 競争で 全力を つくし、最後まで 努力した。",
+        q: { ask: "選手は どうした？", choices: ["努力した", "あきらめた"], answer: 0 }
+      },
+      {
+        id: "4j-3",
+        text: "博物館で 産業の 様子を 観察し、結果を 記録する。",
+        q: { ask: "どこで 観察した？", choices: ["博物館", "公園"], answer: 0 }
+      },
+      {
+        id: "4j-4",
+        text: "健康の ために、毎朝 冷たい 水を 飲んで 体を 清める。",
+        q: { ask: "いつ 飲む？", choices: ["毎朝", "真夜中"], answer: 0 }
+      },
+      {
+        id: "4j-5",
+        text: "仲間を 信じ、約束を 必ず 守る。",
+        q: { ask: "約束を どうする？", choices: ["必ず 守る", "わすれる"], answer: 0 }
+      },
+      {
+        id: "4j-6",
+        text: "国旗を かかげ、軍隊が 静かに 行進する。",
+        q: { ask: "なにを かかげた？", choices: ["国旗", "花"], answer: 0 }
+      },
+      {
+        id: "4j-7",
+        text: "梅雨の 季節は、低い 雲で 天候が 変わりやすい。",
+        q: { ask: "いつの 話？", choices: ["梅雨", "真冬"], answer: 0 }
+      },
+      {
+        id: "4j-8",
+        text: "英語の 単語を 覚え、試験に そなえる。",
+        q: { ask: "なにに そなえる？", choices: ["試験", "旅行"], answer: 0 }
+      },
+      {
+        id: "4j-9",
+        text: "牧場で 牛の 群れを 観て、自然の めぐみを 学ぶ。",
+        q: { ask: "どこの 話？", choices: ["牧場", "学校"], answer: 0 }
+      },
+      {
+        id: "4j-10",
+        text: "塩を 加えて 菜を 焼き、満足の いく 味に する。",
+        q: { ask: "なにを 加えた？", choices: ["塩", "さとう"], answer: 0 }
+      },
+      {
+        id: "4j-11",
+        text: "卒業を 祝い、孫が 老人に 花束を おくる。",
+        q: { ask: "だれに おくる？", choices: ["老人", "友だち"], answer: 0 }
+      },
+      {
+        id: "4j-12",
+        text: "成功を 願い、初めての 大会で 選手が 競う。",
+        q: { ask: "なにを 願う？", choices: ["成功", "失敗"], answer: 0 }
+      }
+    ]
+  },
+  "5-kanji": {
+    label: "5年 かんじ入り",
+    items: [
+      {
+        id: "5j-1",
+        text: "歴史の 授業で、政治の 制度が 移り変わる 様子を 学ぶ。",
+        q: { ask: "なにを 学ぶ？", choices: ["歴史", "算数"], answer: 0 }
+      },
+      {
+        id: "5j-2",
+        text: "貿易が さかんに なり、人々の 生活が 向上する。",
+        q: { ask: "なにが さかんに なった？", choices: ["貿易", "気温"], answer: 0 }
+      },
+      {
+        id: "5j-3",
+        text: "科学の 実験で、液体の 性質を 確かめて 報告する。",
+        q: { ask: "なにを 確かめる？", choices: ["液体の 性質", "ねだん"], answer: 0 }
+      },
+      {
+        id: "5j-4",
+        text: "選手は きびしい 練習で 技術を 高め、賞を 得た。",
+        q: { ask: "なにを 得た？", choices: ["賞", "お金"], answer: 0 }
+      },
+      {
+        id: "5j-5",
+        text: "国際 会議で、平和を 守る 条件を 提案する。",
+        q: { ask: "なにを 提案する？", choices: ["平和の 条件", "旅行"], answer: 0 }
+      },
+      {
+        id: "5j-6",
+        text: "祖父は 質素な 生活を 好み、豊かな 心を 大切に した。",
+        q: { ask: "祖父は どんな 生活？", choices: ["質素", "ぜいたく"], answer: 0 }
+      },
+      {
+        id: "5j-7",
+        text: "予測した 結果と 比べ、原因を 調べて 解決する。",
+        q: { ask: "なにを 調べる？", choices: ["原因", "ねだん"], answer: 0 }
+      },
+      {
+        id: "5j-8",
+        text: "規則を 守り、責任を もって 任務を 果たす。",
+        q: { ask: "なにを 果たす？", choices: ["任務", "やくそく"], answer: 0 }
+      },
+      {
+        id: "5j-9",
+        text: "綿の 布を 編んで、独自の 製品を 作る。",
+        q: { ask: "なにで つくる？", choices: ["綿の 布", "鉄"], answer: 0 }
+      },
+      {
+        id: "5j-10",
+        text: "銅と 鉱物を 採って、工場で 銅像を 造る。",
+        q: { ask: "なにを 造る？", choices: ["銅像", "紙"], answer: 0 }
+      },
+      {
+        id: "5j-11",
+        text: "災害に そなえ、消防士が 救助の 訓練を 行う。",
+        q: { ask: "だれが 訓練する？", choices: ["消防士", "先生"], answer: 0 }
+      },
+      {
+        id: "5j-12",
+        text: "夢を かなえる ため、毎日 復習を 続け、技を みがく。",
+        q: { ask: "なにを 続ける？", choices: ["復習", "昼ね"], answer: 0 }
+      }
+    ]
+  },
+  "6-kanji": {
+    label: "6年 かんじ入り",
+    items: [
+      {
+        id: "6j-1",
+        text: "憲法は 国民の 権利を 守る、大切な きまり だ。",
+        q: { ask: "憲法は なにを 守る？", choices: ["国民の 権利", "お金"], answer: 0 }
+      },
+      {
+        id: "6j-2",
+        text: "専門家が 異なる 視点から、難しい 問題を 討論する。",
+        q: { ask: "なにを する？", choices: ["討論", "昼ね"], answer: 0 }
+      },
+      {
+        id: "6j-3",
+        text: "我々は 自然の 恩を 忘れず、地域を 守る。",
+        q: { ask: "なにを 守る？", choices: ["地域", "お金"], answer: 0 }
+      },
+      {
+        id: "6j-4",
+        text: "心臓と 肺と 胃は、人の 体の 大切な 臓器 だ。",
+        q: { ask: "どれが 臓器？", choices: ["心臓", "つくえ"], answer: 0 }
+      },
+      {
+        id: "6j-5",
+        text: "警官が 危険を 警かいし、人々の 安全を 守る。",
+        q: { ask: "だれが 警かいする？", choices: ["警官", "商人"], answer: 0 }
+      },
+      {
+        id: "6j-6",
+        text: "宗教の 聖地を 訪れ、純すいな いのりを ささげる。",
+        q: { ask: "どこを 訪れた？", choices: ["聖地", "お店"], answer: 0 }
+      },
+      {
+        id: "6j-7",
+        text: "卵から かえった 蚕が、絹糸を つくる 様子を 視察する。",
+        q: { ask: "なにが 絹糸を つくる？", choices: ["蚕", "鳥"], answer: 0 }
+      },
+      {
+        id: "6j-8",
+        text: "首脳が 会談し、両国の 困難な 課題を 処理する。",
+        q: { ask: "だれが 会談する？", choices: ["首脳", "子ども"], answer: 0 }
+      },
+      {
+        id: "6j-9",
+        text: "厳しい 寒さに たえ、忠実な 兵が 城を 守った。",
+        q: { ask: "だれが 守った？", choices: ["忠実な 兵", "商人"], answer: 0 }
+      },
+      {
+        id: "6j-10",
+        text: "私は 毎朝 背すじを のばし、姿勢を 正す。",
+        q: { ask: "なにを 正す？", choices: ["姿勢", "時計"], answer: 0 }
+      },
+      {
+        id: "6j-11",
+        text: "郵便局で、貴重な 書類を 届ける。",
+        q: { ask: "どこへ 行った？", choices: ["郵便局", "公園"], answer: 0 }
+      },
+      {
+        id: "6j-12",
+        text: "著名な 作家が、独創的な 物語を 創作する。",
+        q: { ask: "だれが 創作する？", choices: ["著名な 作家", "学生"], answer: 0 }
+      }
+    ]
+  }
+});
+
+  </script>
+  <script>
+// 大人むけの問題（こどもと いっしょに）
+// app.js より先に読み込むこと。window.PASSAGE_SETS に登録する。
+// 小学校で習わない常用漢字を多く含む（表外字は不使用）。
+window.PASSAGE_SETS = Object.assign(window.PASSAGE_SETS || {}, {
+  "adult": {
+    label: "大人むけ（中学いじょうの 漢字）",
+    items: [
+      {
+        id: "ad-1",
+        text: "曖昧な 記憶を たどりながら、彼は 慎重に 言葉を 紡いだ。",
+        q: { ask: "「曖昧」の いみは？", choices: ["はっきりしない", "はっきりした"], answer: 0 }
+      },
+      {
+        id: "ad-2",
+        text: "完璧を 求める あまり、彼女は ささいな 綻びにも 苛立った。",
+        q: { ask: "「完璧」とは？", choices: ["かんぜん", "ふかんぜん"], answer: 0 }
+      },
+      {
+        id: "ad-3",
+        text: "雄大な 渓谷に 響く 滝の 音に、思わず 息を のんだ。",
+        q: { ask: "どこの ようす？", choices: ["渓谷", "砂漠"], answer: 0 }
+      },
+      {
+        id: "ad-4",
+        text: "曽祖父は 囲炉裏の 傍らで 煙草を くゆらせ、昔話を 語った。",
+        q: { ask: "だれが 語った？", choices: ["曽祖父", "孫"], answer: 0 }
+      },
+      {
+        id: "ad-5",
+        text: "彼の 傲慢な 態度に へきえきし、誰もが 距離を 置いた。",
+        q: { ask: "みんなは どうした？", choices: ["距離を 置いた", "仲良くした"], answer: 0 }
+      },
+      {
+        id: "ad-6",
+        text: "緻密な 計画も、僅かな 綻びから もろくも 崩壊した。",
+        q: { ask: "計画は どうなった？", choices: ["崩壊した", "成功した"], answer: 0 }
+      },
+      {
+        id: "ad-7",
+        text: "漆黒の 闇に 紛れ、猫は 俊敏に 獲物へと 忍び寄った。",
+        q: { ask: "猫は なにを ねらった？", choices: ["獲物", "ねどこ"], answer: 0 }
+      },
+      {
+        id: "ad-8",
+        text: "芳しい 香りが 辺りに 漂い、庭の 静寂を 際立たせた。",
+        q: { ask: "なにが 漂った？", choices: ["香り", "けむり"], answer: 0 }
+      },
+      {
+        id: "ad-9",
+        text: "頑固な 祖父も、孫の 戯れには 相好を 崩した。",
+        q: { ask: "祖父は どうした？", choices: ["わらった", "おこった"], answer: 0 }
+      },
+      {
+        id: "ad-10",
+        text: "稲妻が 夜空を 裂き、雷鳴が 大地を 揺るがした。",
+        q: { ask: "空で なにが 光った？", choices: ["稲妻", "花火"], answer: 0 }
+      },
+      {
+        id: "ad-11",
+        text: "彼女は 憧憬の 眼差しで、舞台の 女優を 見つめた。",
+        q: { ask: "だれを 見つめた？", choices: ["女優", "観客"], answer: 0 }
+      },
+      {
+        id: "ad-12",
+        text: "矛盾だらけの 弁解は、かえって 彼の 立場を 危うくした。",
+        q: { ask: "弁解で どうなった？", choices: ["危うくなった", "安全になった"], answer: 0 }
+      },
+      {
+        id: "ad-13",
+        text: "老舗の のれんを くぐると、芳ばしい 出汁の 匂いが 漂った。",
+        q: { ask: "なにの 匂い？", choices: ["出汁", "花"], answer: 0 }
+      },
+      {
+        id: "ad-14",
+        text: "荒涼とした 荒野を、隊商は 黙々と らくだで 横断した。",
+        q: { ask: "なにで わたった？", choices: ["らくだ", "船"], answer: 0 }
+      },
+      {
+        id: "ad-15",
+        text: "彼は 卑屈な 笑みを 浮かべ、上司に へつらった。",
+        q: { ask: "彼の わらいは？", choices: ["卑屈", "堂々"], answer: 0 }
+      },
+      {
+        id: "ad-16",
+        text: "繊細な 旋律が 紡がれ、聴衆は 陶酔の 渦に 包まれた。",
+        q: { ask: "聴衆は どうなった？", choices: ["陶酔した", "退屈した"], answer: 0 }
+      },
+      {
+        id: "ad-17",
+        text: "山頂から 眺める 雲海は、荘厳かつ 幽玄な 絶景に 思えた。",
+        q: { ask: "なにを 眺めた？", choices: ["雲海", "町並み"], answer: 0 }
+      },
+      {
+        id: "ad-18",
+        text: "みじんも 動じない 彼の 胆力に、一同は 畏敬の 念を 抱いた。",
+        q: { ask: "彼は どんな 人？", choices: ["肝が すわった", "おくびょう"], answer: 0 }
+      },
+      {
+        id: "ad-19",
+        text: "交錯する 情報の 渦中で、冷静沈着に 真偽を 見極めた。",
+        q: { ask: "なにを 見きわめた？", choices: ["真偽", "値段"], answer: 0 }
+      },
+      {
+        id: "ad-20",
+        text: "湿潤な 密林には、奇怪な 昆虫が 無数に 生息している。",
+        q: { ask: "どこの 話？", choices: ["密林", "砂漠"], answer: 0 }
+      },
+      {
+        id: "ad-21",
+        text: "彼女の 優雅で 気品 ある 物腰は、周囲を 瞬時に 魅了した。",
+        q: { ask: "彼女は どんな ようす？", choices: ["気品が ある", "だらしない"], answer: 0 }
+      },
+      {
+        id: "ad-22",
+        text: "頻繁に 催促され、彼は 渋々と 借金の 返済に 応じた。",
+        q: { ask: "彼は なにを した？", choices: ["返済", "貯金"], answer: 0 }
+      },
+      {
+        id: "ad-23",
+        text: "砕けた 陶器を 丹念に 接合し、巧みに 修復してみせた。",
+        q: { ask: "こわれた ものを どうした？", choices: ["修復した", "すてた"], answer: 0 }
+      },
+      {
+        id: "ad-24",
+        text: "酷暑の 太陽が 照りつけ、舗装路から 陽炎が 立ち昇った。",
+        q: { ask: "なにが 立ちのぼった？", choices: ["陽炎", "煙突"], answer: 0 }
+      },
+      {
+        id: "ad-25",
+        text: "潔癖な 彼は、ささいな 汚れにも 過敏に 反応し 苛立った。",
+        q: { ask: "彼は どんな 性格？", choices: ["潔癖", "おおらか"], answer: 0 }
+      },
+      {
+        id: "ad-26",
+        text: "鬱然と 茂る 暗い 森の 奥で、不気味な 声が 響いた。",
+        q: { ask: "森は どんな ようす？", choices: ["うす暗い", "あかるい"], answer: 0 }
+      },
+      {
+        id: "ad-27",
+        text: "卓越した 棋士は、盤面を ひと目で 見て、勝敗を 看破した。",
+        q: { ask: "棋士は なにを 見ぬいた？", choices: ["勝敗", "天気"], answer: 0 }
+      },
+      {
+        id: "ad-28",
+        text: "彼は 漠然とした 不安に 苛まれ、何度も 寝返りを うち 眠れなかった。",
+        q: { ask: "彼は ねむれた？", choices: ["ねむれなかった", "ぐっすり"], answer: 0 }
+      },
+      {
+        id: "ad-29",
+        text: "華麗な 衣装を まとった 踊り子が、優雅に 旋回した。",
+        q: { ask: "踊り子は なにを 着た？", choices: ["衣装", "よろい"], answer: 0 }
+      },
+      {
+        id: "ad-30",
+        text: "膨大な 蔵書を 渉猟し、彼は 該博な 知識を 蓄えた。",
+        q: { ask: "彼は なにを たくわえた？", choices: ["知識", "財産"], answer: 0 }
+      }
+    ]
+  }
+});
+
+  </script>
+  <script>
+// よむよむスピードトレーニング
+// 設計根拠: docs/speed-reading-research.md
+// 中核となる知見:
+//  - 反復読み(Repeated Reading): 同じ短文を繰り返し読むと流暢性・理解が伸びる (NRP 2000 / Therrien 2004)
+//  - お手本提示(Modeling / Listening Passage Preview): 先に流暢な読みを聞くと効果が増す (Lee & Yoon 2017)
+//  - 速度は強制しない: 速度-正確性トレードオフ。子の眼球運動は発達段階の制約を受ける (Rayner 2016)
+//    → 自動送り(強制ペース)は採用せず、「きのうの じぶん」より伸びたかを可視化する
+//  - 正確さと理解を併記: 流暢性 = 正確性 × 自動化 × 韻律 (Rasinski 2006)
+//  - 分散復習(Spacing): 数日あけて既習文を再提示すると定着が高まる
+//  - ゲーミフィケーション: streak/ほし/バッジは動機づけに有効 (Kurnaz 2025 ほか)。報酬は正確さ・理解に重みづけ。
+
+// 問題データは data/passages-*.js が window.PASSAGE_SETS に登録する。
+// 学年/大人ごとに別ファイル（grade1 / grade2 / adult）へ分割。各短文に内容確認(2択)付き。
+// 漢字込みは学年別漢字配当表に沿った漢字のみ（docs/kanji-by-grade.md）。
+const passageSets = window.PASSAGE_SETS || {};
+
+const defaultState = {
+  streak: 0,
+  lastPlayedDate: "",
+  totalStars: 0,
+  bestScore: 0,
+  lastStarsToday: 0,
+  // 分散復習・自己ベスト用: { [passageId]: { lastDate, bestMs, plays } }
+  passageStats: {}
+};
+
+const MS_PER_MINUTE = 60000;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const REVIEW_DAYS = 2; // 何日あいたら「ふくしゅう」扱いにするか
+const SESSION_PASSAGES = 3; // 1セッションで扱う短文数(やく1分)
+
+// 永続状態(streak / ほし / 自己ベスト / 分散復習)は単一オブジェクトで保持し、
+// 更新のたびに saveState する。ハンドラごとに読み直すと更新が失われるため。
+let appState = null;
+
+// --- セッション中の状態 ---
+let running = false;
+let elapsedTimerId = null;
+let elapsedSec = 0;
+
+let queue = []; // このセッションで読む短文(復習を優先して構成)
+let passageIndex = 0; // 何文目か(0始まり)
+let repeatTarget = 3; // くりかえす回数
+let currentRepeat = 0; // いま何回目か(0始まり)
+let readStartMs = 0; // この読みの計測開始時刻
+let currentReadTimes = []; // この短文の各回の読み時間(ms)
+
+let score = 0;
+let combo = 0;
+let count = 0; // 読んだ回数の合計
+let fluentReads = 0; // 「すらすら」と自己申告できた回数
+let totalWords = 0; // 正しく読めた語の合計(WCPM計算用)
+let totalReadMs = 0; // 読みにかかった合計時間
+let comprehensionCorrect = 0;
+let comprehensionTotal = 0;
+let starsToday = 0;
+
+// --- DOM ---
+const setSelect = document.getElementById("setSelect");
+const repeatSelect = document.getElementById("repeatSelect");
+const modelRange = document.getElementById("modelRange");
+const modelValue = document.getElementById("modelValue");
+const startBtn = document.getElementById("startBtn");
+
+const passageIndexEl = document.getElementById("passageIndex");
+const passageTotalEl = document.getElementById("passageTotal");
+const repeatIndexEl = document.getElementById("repeatIndex");
+const repeatTotalEl = document.getElementById("repeatTotal");
+const reviewTagEl = document.getElementById("reviewTag");
+const elapsedEl = document.getElementById("elapsed");
+const passageEl = document.getElementById("passage");
+const modelBtn = document.getElementById("modelBtn");
+const readBtn = document.getElementById("readBtn");
+
+const feedbackEl = document.getElementById("feedback");
+const fluentBtn = document.getElementById("fluentBtn");
+const stumbleBtn = document.getElementById("stumbleBtn");
+const improveNoteEl = document.getElementById("improveNote");
+
+const quizEl = document.getElementById("quiz");
+const quizQuestionEl = document.getElementById("quizQuestion");
+const quizChoicesEl = document.getElementById("quizChoices");
+const quizResultEl = document.getElementById("quizResult");
+
+const scoreEl = document.getElementById("score");
+const comboEl = document.getElementById("combo");
+const countEl = document.getElementById("count");
+const wpmEl = document.getElementById("wpm");
+const accuracyEl = document.getElementById("accuracy");
+const comprehensionEl = document.getElementById("comprehension");
+const starsTodayEl = document.getElementById("starsToday");
+
+const streakEl = document.getElementById("streak");
+const totalStarsEl = document.getElementById("totalStars");
+const bestScoreEl = document.getElementById("bestScore");
+const badgesEl = document.getElementById("badges");
+
+// --- ユーティリティ ---
+function loadState() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem("speedKidsState") || "{}");
+    return { ...defaultState, ...parsed, passageStats: { ...(parsed.passageStats || {}) } };
+  } catch {
+    return { ...defaultState, passageStats: {} };
+  }
+}
+
+function saveState(state) {
+  try {
+    localStorage.setItem("speedKidsState", JSON.stringify(state));
+  } catch {
+    // 保存できない環境(プライベートモード等)では無視する。
+  }
+}
+
+function toLocalYMD(d) {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function daysSince(ymd, todayYMD) {
+  if (!ymd) return Infinity;
+  const a = new Date(`${ymd}T00:00:00`);
+  const b = new Date(`${todayYMD}T00:00:00`);
+  return Math.round((b - a) / MS_PER_DAY);
+}
+
+function wordCount(text) {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function shuffle(list) {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function show(el) {
+  el.classList.remove("hidden");
+}
+
+function hide(el) {
+  el.classList.add("hidden");
+}
+
+// お手本(Modeling): 流暢な読みを先に聞かせる。Web Speech APIが無い環境では静かに無効化。
+// 聞き終えた時点で読みの計測を始め直し、聞いている時間を読み時間に含めない。
+function speakModel(text) {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text.replace(/\s+/g, ""));
+  utter.lang = "ja-JP";
+  utter.rate = Number(modelRange.value);
+  utter.onend = () => {
+    if (running && !readBtn.disabled) readStartMs = Date.now();
+  };
+  window.speechSynthesis.speak(utter);
+}
+
+// --- 分散復習を考慮したセッション構成 ---
+// 「久しく読んでいない / 未読」の短文を優先して選び、自然に復習を織り込む。
+function buildQueue(setKey, stats) {
+  const today = toLocalYMD(new Date());
+  const set = passageSets[setKey] || passageSets["1-hiragana"];
+  const annotated = set.items.map((p) => {
+    const rec = stats.passageStats[p.id];
+    const since = daysSince(rec && rec.lastDate, today);
+    return {
+      ...p,
+      isReview: Number.isFinite(since) && since >= REVIEW_DAYS,
+      sinceDays: since
+    };
+  });
+  // 間隔が大きい(=ひさしぶり/未読)ものを先頭に。Infinity(未読)が最優先。
+  annotated.sort((a, b) => b.sinceDays - a.sinceDays);
+  const picked = annotated.slice(0, Math.min(SESSION_PASSAGES, annotated.length));
+  return shuffle(picked);
+}
+
+// --- 表示更新 ---
+function renderProgress() {
+  scoreEl.textContent = String(score);
+  comboEl.textContent = String(combo);
+  countEl.textContent = String(count);
+  accuracyEl.textContent = count ? String(Math.round((fluentReads / count) * 100)) : "0";
+  comprehensionEl.textContent = `${comprehensionCorrect}/${comprehensionTotal}`;
+  starsTodayEl.textContent = String(starsToday);
+  const minutes = totalReadMs / MS_PER_MINUTE;
+  wpmEl.textContent = minutes > 0 ? String(Math.round(totalWords / minutes)) : "0";
+  elapsedEl.textContent = String(elapsedSec);
+}
+
+function renderState(state) {
+  streakEl.textContent = String(state.streak);
+  totalStarsEl.textContent = String(state.totalStars);
+  bestScoreEl.textContent = String(state.bestScore);
+
+  badgesEl.innerHTML = "";
+  const badgeDefs = [
+    { label: "🌱 3日れんぞく", min: 3 },
+    { label: "🚀 7日れんぞく", min: 7 },
+    { label: "👑 14日れんぞく", min: 14 }
+  ];
+  badgeDefs
+    .filter((badge) => state.streak >= badge.min)
+    .forEach((badge) => {
+      const div = document.createElement("div");
+      div.className = "badge";
+      div.textContent = badge.label;
+      badgesEl.appendChild(div);
+    });
+}
+
+// --- セッションの進行 ---
+function showCurrentPassage() {
+  const passage = queue[passageIndex];
+  passageEl.textContent = passage.text;
+  passageIndexEl.textContent = String(passageIndex + 1);
+  repeatIndexEl.textContent = String(currentRepeat + 1);
+  reviewTagEl.classList.toggle("hidden", !passage.isReview);
+
+  hide(feedbackEl);
+  hide(improveNoteEl);
+  hide(quizEl);
+  readBtn.disabled = false;
+  modelBtn.disabled = false;
+  readStartMs = Date.now();
+}
+
+// 「よめた！」→ 読み時間を確定し、自己申告(すらすら/つっかえた)を求める
+function finishRead() {
+  if (!running) return;
+  const elapsed = Date.now() - readStartMs;
+  currentReadTimes.push(elapsed);
+  readBtn.disabled = true;
+  modelBtn.disabled = true;
+  show(feedbackEl);
+}
+
+// 自己申告を受けて得点・自己ベスト判定し、次の回 or 内容確認へ
+function recordFluency(isFluent) {
+  // 自己申告フォームが出ていない(=多重クリック等)ときは無視する。
+  if (!running || feedbackEl.classList.contains("hidden")) return;
+  const passage = queue[passageIndex];
+  const readMs = currentReadTimes[currentReadTimes.length - 1];
+  const words = wordCount(passage.text);
+
+  count += 1;
+  totalWords += words;
+  totalReadMs += readMs;
+
+  let gained = 5; // 読み切りの基礎点
+  const messages = [];
+
+  if (isFluent) {
+    fluentReads += 1;
+    combo += 1;
+    gained += 5 + combo; // すらすら + れんぞくボーナス
+    messages.push("😄 すらすら よめたね！");
+  } else {
+    combo = 0;
+    messages.push("😅 ゆっくりで だいじょうぶ。もういちど！");
+  }
+
+  // 同じ短文の前の回より速ければ(かつ すらすらなら)称える: 自己ベース改善の可視化
+  if (isFluent && currentReadTimes.length >= 2) {
+    const prev = currentReadTimes[currentReadTimes.length - 2];
+    if (readMs < prev) {
+      const diff = ((prev - readMs) / 1000).toFixed(1);
+      messages.push(`まえより ${diff}びょう はやい！⚡`);
+    }
+  }
+
+  // 自己ベスト(過去の保存記録)更新。すぐ保存して次の回・次の文に引き継ぐ。
+  // 過去に記録がある(=finite)ときだけ「こうしん」を称える。初回はそっと基準を作る。
+  const rec = appState.passageStats[passage.id] || { bestMs: Infinity, plays: 0, lastDate: "" };
+  const hadBest = Number.isFinite(rec.bestMs);
+  if (isFluent && readMs < (rec.bestMs ?? Infinity)) {
+    rec.bestMs = readMs;
+    if (hadBest) {
+      gained += 10;
+      messages.push("🎉 じこベスト こうしん！");
+    } else {
+      messages.push("⭐ はじめての きろく！");
+    }
+  }
+  appState.passageStats[passage.id] = rec;
+  saveState(appState);
+
+  score += gained;
+  improveNoteEl.textContent = messages.join("　");
+  show(improveNoteEl);
+  hide(feedbackEl);
+  renderProgress();
+
+  currentRepeat += 1;
+  if (currentRepeat < repeatTarget) {
+    // 同じ短文をくりかえす(Repeated Reading)
+    repeatIndexEl.textContent = String(currentRepeat + 1);
+    readBtn.disabled = false;
+    modelBtn.disabled = false;
+    readStartMs = Date.now();
+  } else {
+    // くりかえし完了 → 内容確認(理解を落とさない運用)
+    showQuiz(passage);
+  }
+}
+
+function showQuiz(passage) {
+  quizQuestionEl.textContent = passage.q.ask;
+  quizChoicesEl.innerHTML = "";
+  hide(quizResultEl);
+  passage.q.choices.forEach((choice, i) => {
+    const btn = document.createElement("button");
+    btn.className = "quiz-choice";
+    btn.textContent = choice;
+    btn.addEventListener("click", () => answerQuiz(i, passage), { once: true });
+    quizChoicesEl.appendChild(btn);
+  });
+  show(quizEl);
+  readBtn.disabled = true;
+  modelBtn.disabled = true;
+}
+
+function answerQuiz(choiceIndex, passage) {
+  comprehensionTotal += 1;
+  const correct = choiceIndex === passage.q.answer;
+  // 全選択肢を無効化し、正解を明示
+  [...quizChoicesEl.children].forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === passage.q.answer) btn.classList.add("correct");
+    else if (i === choiceIndex) btn.classList.add("wrong");
+  });
+  if (correct) {
+    comprehensionCorrect += 1;
+    score += 15; // 理解に厚めの配点
+    quizResultEl.textContent = "せいかい！⭕ ないようも バッチリ。";
+  } else {
+    combo = 0;
+    quizResultEl.textContent = `おしい！こたえは「${passage.q.choices[passage.q.answer]}」だよ。`;
+  }
+  show(quizResultEl);
+
+  // この短文の学習記録を更新(分散復習・自己ベスト用)
+  const rec = appState.passageStats[passage.id] || { bestMs: Infinity, plays: 0, lastDate: "" };
+  rec.plays = (rec.plays || 0) + 1;
+  rec.lastDate = toLocalYMD(new Date());
+  appState.passageStats[passage.id] = rec;
+  saveState(appState);
+
+  renderProgress();
+
+  // 次の短文へ。少し間をおいて自動で進む(子が結果を見られるように)。
+  setTimeout(() => {
+    passageIndex += 1;
+    if (passageIndex >= queue.length) {
+      endSession();
+    } else {
+      currentRepeat = 0;
+      currentReadTimes = [];
+      showCurrentPassage();
+    }
+  }, 1200);
+}
+
+// --- ほし/streak の付与 ---
+// 報酬は「すらすら度」「理解」に重みづけ。同日中は最大値を採用(やり直しても損しない)。
+function computeSessionStars(state) {
+  const fluentRate = count ? fluentReads / count : 0;
+  const compRate = comprehensionTotal ? comprehensionCorrect / comprehensionTotal : 0;
+  let stars = 1; // 参加のほし
+  if (fluentRate >= 0.7) stars += 1; // すらすら度
+  if (compRate >= 0.5) stars += 1; // 理解
+  if (state.streak >= 7) stars += 1; // 継続ボーナス
+  return stars;
+}
+
+function applyDailyReward() {
+  const state = appState;
+  const today = toLocalYMD(new Date());
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const yesterday = toLocalYMD(yesterdayDate);
+
+  if (state.lastPlayedDate === today) {
+    const prevStarsToday = state.lastStarsToday || 0;
+    const sessionStars = computeSessionStars(state);
+    starsToday = Math.max(prevStarsToday, sessionStars);
+    state.totalStars += starsToday - prevStarsToday;
+    state.bestScore = Math.max(state.bestScore, score);
+    state.lastStarsToday = starsToday;
+    saveState(state);
+    return state;
+  }
+
+  if (state.lastPlayedDate === yesterday) {
+    state.streak += 1;
+  } else {
+    state.streak = 1;
+  }
+
+  starsToday = computeSessionStars(state);
+  state.totalStars += starsToday;
+  state.lastPlayedDate = today;
+  state.bestScore = Math.max(state.bestScore, score);
+  state.lastStarsToday = starsToday;
+  saveState(state);
+  return state;
+}
+
+function endSession() {
+  running = false;
+  clearInterval(elapsedTimerId);
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+
+  readBtn.disabled = true;
+  modelBtn.disabled = true;
+  startBtn.disabled = false;
+  hide(feedbackEl);
+  hide(quizEl);
+  reviewTagEl.classList.add("hidden");
+
+  const state = applyDailyReward();
+  renderProgress();
+  renderState(state);
+
+  const minutes = totalReadMs / MS_PER_MINUTE;
+  const wpm = minutes > 0 ? Math.round(totalWords / minutes) : 0;
+  passageEl.textContent =
+    `おつかれさま！ ${count}かい よんで、よむ はやさは やく ${wpm} ことば/ふん。` +
+    ` すらすら ${count ? Math.round((fluentReads / count) * 100) : 0}%、` +
+    ` りかい ${comprehensionCorrect}/${comprehensionTotal}！`;
+  improveNoteEl.textContent = "あしたも つづけて、きのうの じぶんを こえよう！⭐";
+  show(improveNoteEl);
+}
+
+function startSession() {
+  appState = loadState();
+  running = true;
+  clearInterval(elapsedTimerId);
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+
+  repeatTarget = Number(repeatSelect.value);
+  queue = buildQueue(setSelect.value, appState);
+
+  passageIndex = 0;
+  currentRepeat = 0;
+  currentReadTimes = [];
+  elapsedSec = 0;
+
+  score = 0;
+  combo = 0;
+  count = 0;
+  fluentReads = 0;
+  totalWords = 0;
+  totalReadMs = 0;
+  comprehensionCorrect = 0;
+  comprehensionTotal = 0;
+  starsToday = 0;
+
+  passageTotalEl.textContent = String(queue.length);
+  repeatTotalEl.textContent = String(repeatTarget);
+  startBtn.disabled = true;
+
+  showCurrentPassage();
+  renderProgress();
+
+  // 経過時間は「数えるだけ」。強制ペースや締切で急かさない(速度-正確性トレードオフ配慮)。
+  elapsedTimerId = setInterval(() => {
+    elapsedSec += 1;
+    elapsedEl.textContent = String(elapsedSec);
+  }, 1000);
+}
+
+// --- イベント ---
+const modelRateLabels = { 0.6: "ゆっくり", 0.7: "ゆっくり", 0.8: "ふつう", 0.9: "ふつう", 1: "はやめ", 1.1: "はやめ" };
+modelRange.addEventListener("input", () => {
+  modelValue.textContent = modelRateLabels[modelRange.value] || "ふつう";
+});
+
+startBtn.addEventListener("click", startSession);
+modelBtn.addEventListener("click", () => {
+  if (running) speakModel(queue[passageIndex].text);
+});
+readBtn.addEventListener("click", finishRead);
+fluentBtn.addEventListener("click", () => recordFluency(true));
+stumbleBtn.addEventListener("click", () => recordFluency(false));
+
+appState = loadState();
+renderState(appState);
+renderProgress();
+
+  </script>
+</body>
+</html>
