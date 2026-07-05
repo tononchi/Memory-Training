@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>速読・読解トレーニング（中高生むけ）</title>
+  <style>
+:root {
+  --ink: #1f2a44;
+  --accent: #2f6df6;
+  --accent2: #0fb5a6;
+  --warn: #e0683a;
+  --line: #d8deea;
+  --bg: #f4f7fb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.7;
+}
+
+.app {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin: 6px 0 18px;
+  color: #5a647a;
+  font-weight: 600;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin: 14px 0;
+  box-shadow: 0 2px 10px rgba(31, 42, 68, 0.05);
+}
+
+.controls {
+  display: flex;
+  gap: 14px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+label {
+  font-weight: 700;
+  display: grid;
+  gap: 6px;
+  flex: 1;
+  min-width: 240px;
+}
+
+select, button {
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+select {
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  padding: 11px 18px;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.05); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.tip-panel { background: #eef4ff; border-color: #cfe0ff; }
+.tip { font-weight: 600; }
+
+.read-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.passage-title { font-weight: 700; color: var(--accent); }
+.timer { font-variant-numeric: tabular-nums; color: #5a647a; font-weight: 600; }
+
+.passage {
+  font-size: 1.18rem;
+  line-height: 2.0;
+  padding: 14px 4px;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+  margin: 8px 0 14px;
+}
+
+#readBtn { background: var(--accent2); }
+
+.quiz { margin-top: 6px; }
+.quiz-q { font-weight: 700; font-size: 1.1rem; margin: 4px 0 12px; }
+.quiz-choices { display: grid; gap: 10px; }
+
+.quiz-choices button {
+  background: #fff;
+  color: var(--ink);
+  border: 1.5px solid var(--accent);
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 600;
+}
+.quiz-choices button:hover { background: #eef4ff; }
+.quiz-choices button.correct { background: #e7f8f1; border-color: var(--accent2); color: #0a7d70; }
+.quiz-choices button.wrong { background: #fdeee7; border-color: var(--warn); color: #b4451f; }
+
+.quiz-progress { color: #5a647a; font-size: 0.9rem; margin: 10px 0 0; }
+
+.result {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f0f4fb;
+  font-weight: 600;
+}
+.result.good { background: #e7f8f1; }
+.result.warn { background: #fdeee7; }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 22px;
+}
+.stats h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.stats h3 { margin: 6px 0; font-size: 0.95rem; color: #5a647a; }
+.stats p { margin: 5px 0; }
+.muted { color: #8a93a6; font-size: 0.82rem; }
+
+.note {
+  font-size: 0.9rem;
+  color: #4a546c;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-top: 16px;
+}
+.note a { color: var(--accent); font-weight: 700; }
+
+.hidden { display: none !important; }
+
+@media (max-width: 620px) {
+  .stat-grid { grid-template-columns: 1fr; }
+  .controls { flex-direction: column; align-items: stretch; }
+}
+
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>速読・読解トレーニング</h1>
+    <p class="subtitle">中学生・高校生むけ｜目的に応じて「読み方」を使い分ける</p>
+
+    <section class="panel controls">
+      <label>
+        読み方（モード）
+        <select id="modeSelect">
+          <option value="skim">ざっくり読み（スキミング：要旨をつかむ）</option>
+          <option value="scan">さがし読み（スキャニング：情報を探す）</option>
+          <option value="careful">じっくり読み（精読：正確に理解する）</option>
+        </select>
+      </label>
+      <button id="startBtn">スタート</button>
+    </section>
+
+    <section class="panel tip-panel">
+      <div id="tip" class="tip">モードを選んで「スタート」を押してください。</div>
+    </section>
+
+    <section class="panel reading">
+      <div class="read-head">
+        <span id="passageTitle" class="passage-title"></span>
+        <span class="timer">時間: <span id="elapsed">0.0</span> 秒</span>
+      </div>
+      <div id="passage" class="passage hidden"></div>
+      <button id="readBtn" class="hidden">読み終えた</button>
+
+      <div id="quiz" class="quiz hidden">
+        <p id="quizQuestion" class="quiz-q"></p>
+        <div id="quizChoices" class="quiz-choices"></div>
+        <p id="quizProgress" class="quiz-progress"></p>
+      </div>
+
+      <div id="result" class="result hidden"></div>
+    </section>
+
+    <section class="panel stats">
+      <h2>記録</h2>
+      <div class="stat-grid">
+        <div>
+          <h3>このかい</h3>
+          <p>読速: <span id="cpm">—</span> 文字/分</p>
+          <p>時間: <span id="roundTime">—</span> 秒</p>
+          <p>理解: <span id="roundComp">—</span></p>
+          <p>有効読速: <span id="effCpm">—</span> <span class="muted">（理解できた時だけ記録）</span></p>
+        </div>
+        <div>
+          <h3>モード別ベスト有効読速</h3>
+          <p>ざっくり読み: <span id="bestSkim">—</span> 文字/分</p>
+          <p>さがし読み: <span id="bestScan">—</span> 文字/分</p>
+          <p>じっくり読み: <span id="bestCareful">—</span> 文字/分</p>
+          <p>通算 理解率: <span id="compRate">—</span>%（<span id="rounds">0</span>回）</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="note">
+      <p>
+        <strong>この訓練の考え方：</strong>研究では、中学生以降は「速く読む」こと自体より、
+        <strong>目的に応じた読速の使い分け（スキミング／スキャニング／精読）と読解方略</strong>、
+        そして<strong>理解の担保</strong>が有効とされています。
+        いわゆる高速提示型の“速読”は速度こそ上がりますが、精読の理解は向上しません
+        （だから本アプリは<strong>理解できた時だけ読速を記録</strong>します）。
+        根拠は docs/reading-by-grade-band.md（リポジトリ参照） を参照。
+      </p>
+      
+    </footer>
+  </main>
+
+  <script>
+// 中高生むけ「速読・読解」アプリの問題データ
+// 設計根拠: ../docs/reading-by-grade-band.md
+//  - 中学生以降は流暢性ドリルより、目的に応じた読速調整（スキミング/スキャニング/精読）と
+//    読解方略・理解の担保が有効（Scammacca 2015 / Okkinga 2018 / Filderman 2022 / Rayner 2016）。
+// 各文章に3種の設問を用意する:
+//  - skimQ   … 要旨（ざっくり読み＝スキミング用）
+//  - scanQ   … 特定情報の探索（さがし読み＝スキャニング用）
+//  - careful … 細部＋推論（じっくり読み＝精読用、2問）
+window.SECONDARY_PASSAGES = [
+  {
+    id: "s-photosynthesis",
+    title: "光合成",
+    text:
+      "植物は、葉緑体の中で太陽の光のエネルギーを利用し、二酸化炭素と水から、でんぷんなどの養分と酸素をつくり出す。" +
+      "このはたらきを光合成という。光合成は主に葉で行われ、つくられた養分は植物自身の成長に使われるだけでなく、" +
+      "それを食べる動物の生命も間接的に支えている。",
+    skimQ: { ask: "この文章の主旨は？", choices: ["植物が光で養分をつくるしくみ", "動物の呼吸のしくみ"], answer: 0 },
+    scanQ: { ask: "光合成は主にどこで行われる？", choices: ["葉", "根"], answer: 0 },
+    careful: [
+      { ask: "光合成でつくり出される気体は？", choices: ["酸素", "二酸化炭素"], answer: 0 },
+      { ask: "光合成が止まると動物も困る理由は？", choices: ["養分と酸素の供給が減るから", "気温が上がるから"], answer: 0 }
+    ]
+  },
+  {
+    id: "s-volcano",
+    title: "火山",
+    text:
+      "地下深くで岩石が高温でとけたものをマグマという。マグマが地表の弱い部分から噴き出すと火山ができる。" +
+      "火山は噴火によって災害をもたらす一方、噴出物が風化してできた土地は養分に富み、温泉や地熱発電など、" +
+      "人々の生活に恵みも与えている。",
+    skimQ: { ask: "この文章の主旨は？", choices: ["火山の害と恵みの両面", "川の流れのしくみ"], answer: 0 },
+    scanQ: { ask: "とけた岩石を何という？", choices: ["マグマ", "プレート"], answer: 0 },
+    careful: [
+      { ask: "火山がもたらす恵みの例は？", choices: ["温泉や地熱発電", "大雨"], answer: 0 },
+      { ask: "火山の近くに人が住むことがある理由は？", choices: ["土地が肥え、資源も得られるから", "災害がまったくないから"], answer: 0 }
+    ]
+  },
+  {
+    // 注: 「征夷大将軍」は歴史用語のため、常用漢字外の「夷」を意図的に使用（学校教育で既習・通常はふりがな付き）。
+    id: "s-kamakura",
+    title: "鎌倉幕府",
+    text:
+      "源頼朝は、各地の武士をまとめ、朝廷から征夷大将軍に任じられて鎌倉に幕府を開いた。" +
+      "これにより、貴族にかわって武士が政治の中心となる時代が始まった。" +
+      "将軍と御家人は、領地を仲立ちとした「御恩と奉公」の関係で結ばれていた。",
+    skimQ: { ask: "この文章の主旨は？", choices: ["武士が政治の中心になった始まり", "農業技術の進歩"], answer: 0 },
+    scanQ: { ask: "頼朝が任じられた地位は？", choices: ["征夷大将軍", "関白"], answer: 0 },
+    careful: [
+      { ask: "将軍と御家人を結んだ関係は？", choices: ["御恩と奉公", "売買契約"], answer: 0 },
+      { ask: "御家人が将軍に忠誠を尽くした主な動機は？", choices: ["領地を保証してもらえるから", "税が無料になるから"], answer: 0 }
+    ]
+  },
+  {
+    id: "s-foodchain",
+    title: "食物連鎖",
+    text:
+      "生物どうしは「食べる・食べられる」の関係で、鎖のようにつながっている。これを食物連鎖という。" +
+      "植物を草食動物が食べ、草食動物を肉食動物が食べる。ある生物が急に減ると、それを食べる生物も、" +
+      "食べられていた生物も影響を受け、生態系のつり合いがくずれることがある。",
+    skimQ: { ask: "この文章の主旨は？", choices: ["生物のつながりとつり合い", "天気の変化のしくみ"], answer: 0 },
+    scanQ: { ask: "食べる・食べられるのつながりを何という？", choices: ["食物連鎖", "食料品"], answer: 0 },
+    careful: [
+      { ask: "草食動物を食べるのは？", choices: ["肉食動物", "植物"], answer: 0 },
+      { ask: "ある生物が急に減ると何が起きうる？", choices: ["生態系のつり合いがくずれる", "何の影響もない"], answer: 0 }
+    ]
+  },
+  {
+    id: "s-internet",
+    title: "インターネット",
+    text:
+      "インターネットは、世界中のコンピュータを相互に接続する通信網である。一九六〇年代の研究用ネットワークを起源とし、" +
+      "共通の規約に従って情報をやり取りする。今日では情報の検索や交流、商取引に欠かせない一方、" +
+      "誤った情報の拡散や個人情報の流出といった課題も抱えている。",
+    skimQ: { ask: "この文章の主旨は？", choices: ["インターネットの役割と課題", "鉄道の歴史"], answer: 0 },
+    scanQ: { ask: "起源はいつの研究用ネットワーク？", choices: ["一九六〇年代", "一九九〇年代"], answer: 0 },
+    careful: [
+      { ask: "課題として挙げられているのは？", choices: ["誤情報の拡散や個人情報の流出", "通信料金の値上がり"], answer: 0 },
+      { ask: "共通の規約が必要な理由は？", choices: ["異なる機器どうしが情報をやり取りするため", "電気を節約するため"], answer: 0 }
+    ]
+  },
+  {
+    id: "s-warming",
+    title: "地球温暖化",
+    text:
+      "石油や石炭などの化石燃料を大量に燃やすと、二酸化炭素などの温室効果ガスが増える。" +
+      "これらのガスは地表から逃げる熱の一部をとどめるため、地球の平均気温が上昇する。" +
+      "これを地球温暖化といい、海面の上昇や異常気象との関連が指摘されている。",
+    skimQ: { ask: "この文章の主旨は？", choices: ["温室効果ガスと気温上昇", "植物の分類"], answer: 0 },
+    scanQ: { ask: "熱の一部をとどめるガスを何という？", choices: ["温室効果ガス", "希ガス"], answer: 0 },
+    careful: [
+      { ask: "温暖化と関連が指摘されているのは？", choices: ["海面上昇や異常気象", "地震の増加"], answer: 0 },
+      { ask: "化石燃料の使用を減らすと考えられる効果は？", choices: ["温室効果ガスの増加がおさえられる", "気温が急に下がる"], answer: 0 }
+    ]
+  },
+  {
+    id: "s-sleep",
+    title: "睡眠と記憶",
+    text:
+      "睡眠は体を休めるだけでなく、記憶の整理にも関わっている。日中に覚えた情報は、眠っている間に脳内で整理され、" +
+      "必要なものが長期記憶として定着すると考えられている。睡眠不足が続くと、集中力が低下し、" +
+      "学習した内容が定着しにくくなる。",
+    skimQ: { ask: "この文章の主旨は？", choices: ["睡眠と記憶の関係", "食事の栄養素"], answer: 0 },
+    scanQ: { ask: "情報が整理されるのはいつ？", choices: ["眠っている間", "運動中"], answer: 0 },
+    careful: [
+      { ask: "睡眠不足が続くと低下するのは？", choices: ["集中力", "身長"], answer: 0 },
+      { ask: "試験前夜の行動として適切なのは？", choices: ["十分に睡眠をとる", "徹夜で覚え続ける"], answer: 0 }
+    ]
+  },
+  {
+    id: "s-renewable",
+    title: "再生可能エネルギー",
+    text:
+      "太陽光や風力、水力などは、使ってもなくならず繰り返し利用できるため、再生可能エネルギーと呼ばれる。" +
+      "発電時に二酸化炭素をほとんど出さない利点がある一方、天候によって発電量が変わりやすく、" +
+      "安定して電気を供給する工夫が課題となっている。",
+    skimQ: { ask: "この文章の主旨は？", choices: ["再生可能エネルギーの利点と課題", "通貨の歴史"], answer: 0 },
+    scanQ: { ask: "再生可能エネルギーの例は？", choices: ["太陽光や風力", "石炭や石油"], answer: 0 },
+    careful: [
+      { ask: "課題として挙げられているのは？", choices: ["天候で発電量が変わりやすい", "燃料費が高い"], answer: 0 },
+      { ask: "「再生可能」と呼ばれる理由は？", choices: ["使ってもなくならず繰り返し使えるから", "価格が安いから"], answer: 0 }
+    ]
+  }
+];
+
+  </script>
+  <script>
+// 速読・読解トレーニング（中高生むけ）
+// 設計根拠: ../docs/reading-by-grade-band.md
+//  - 目的に応じた読速の使い分け（スキミング/スキャニング/精読）＋読解方略＋理解の担保。
+//  - 「理解できた時だけ読速を記録」する＝速度-正確性トレードオフ(Rayner 2016)への配慮。
+//  - RSVP的な高速強制提示は採用しない。
+
+const passages = window.SECONDARY_PASSAGES || [];
+
+const TIPS = {
+  skim:
+    "🔎 ざっくり読み（スキミング）：題・最初と最後の文・くり返し出る語に注目し、全体の要旨をつかもう。細部は飛ばしてOK。読み終えたら主旨を答えます。",
+  scan:
+    "🎯 さがし読み（スキャニング）：先に「何を探すか」を確かめ、その語・数字だけを目で追って探そう。答えが見つかったら選択肢を押します。",
+  careful:
+    "📖 じっくり読み（精読）：段落ごとに頭の中で要約し、わからない語は前後から推測。理解を最優先に、細部と推論まで読み取ろう。"
+};
+const MODE_LABELS = { skim: "ざっくり読み", scan: "さがし読み", careful: "じっくり読み" };
+
+// --- 状態 ---
+let mode = "skim";
+let phase = "idle"; // idle | reading | question | done
+let passage = null;
+let qList = []; // この回の設問
+let qIndex = 0;
+let correctCount = 0;
+let readStartMs = 0;
+let readMs = 0;
+let timerId = null;
+let order = []; // 出題順（毎ラウンド消費し、尽きたら作り直す）
+
+// --- 永続記録 ---
+function loadStore() {
+  try {
+    return JSON.parse(localStorage.getItem("secondaryReading") || "{}");
+  } catch {
+    return {};
+  }
+}
+function saveStore(s) {
+  try {
+    localStorage.setItem("secondaryReading", JSON.stringify(s));
+  } catch {
+    /* 保存不可環境は無視 */
+  }
+}
+let store = {
+  best: { skim: 0, scan: 0, careful: 0 },
+  compCorrect: 0,
+  compTotal: 0,
+  rounds: 0,
+  ...loadStore()
+};
+store.best = { skim: 0, scan: 0, careful: 0, ...(store.best || {}) };
+
+// --- DOM ---
+const modeSelect = document.getElementById("modeSelect");
+const startBtn = document.getElementById("startBtn");
+const tipEl = document.getElementById("tip");
+const passageTitleEl = document.getElementById("passageTitle");
+const elapsedEl = document.getElementById("elapsed");
+const passageEl = document.getElementById("passage");
+const readBtn = document.getElementById("readBtn");
+const quizEl = document.getElementById("quiz");
+const quizQuestionEl = document.getElementById("quizQuestion");
+const quizChoicesEl = document.getElementById("quizChoices");
+const quizProgressEl = document.getElementById("quizProgress");
+const resultEl = document.getElementById("result");
+
+const cpmEl = document.getElementById("cpm");
+const roundTimeEl = document.getElementById("roundTime");
+const roundCompEl = document.getElementById("roundComp");
+const effCpmEl = document.getElementById("effCpm");
+const bestSkimEl = document.getElementById("bestSkim");
+const bestScanEl = document.getElementById("bestScan");
+const bestCarefulEl = document.getElementById("bestCareful");
+const compRateEl = document.getElementById("compRate");
+const roundsEl = document.getElementById("rounds");
+
+// --- ユーティリティ ---
+function show(el) { el.classList.remove("hidden"); }
+function hide(el) { el.classList.add("hidden"); }
+function charCount(text) { return [...text].length; }
+function cpmOf(chars, ms) { return ms > 0 ? Math.round(chars / (ms / 60000)) : 0; }
+
+function nextPassage() {
+  if (!order.length) {
+    // 並べ替えてラウンドを作り直す（Math.random は許可された通常のブラウザJS）
+    order = passages.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+  }
+  return passages[order.shift()];
+}
+
+function startTimer() {
+  readStartMs = Date.now();
+  clearInterval(timerId);
+  timerId = setInterval(() => {
+    elapsedEl.textContent = ((Date.now() - readStartMs) / 1000).toFixed(1);
+  }, 100);
+}
+function stopTimer() {
+  clearInterval(timerId);
+  readMs = Date.now() - readStartMs;
+  elapsedEl.textContent = (readMs / 1000).toFixed(1);
+}
+
+function renderStore() {
+  bestSkimEl.textContent = store.best.skim || "—";
+  bestScanEl.textContent = store.best.scan || "—";
+  bestCarefulEl.textContent = store.best.careful || "—";
+  compRateEl.textContent = store.compTotal ? Math.round((store.compCorrect / store.compTotal) * 100) : "—";
+  roundsEl.textContent = String(store.rounds);
+}
+
+// --- ラウンド進行 ---
+function startRound() {
+  mode = modeSelect.value;
+  passage = nextPassage();
+  correctCount = 0;
+  qIndex = 0;
+  qList = mode === "careful" ? passage.careful.slice() : [mode === "skim" ? passage.skimQ : passage.scanQ];
+
+  tipEl.textContent = TIPS[mode];
+  passageTitleEl.textContent = `「${passage.title}」（${MODE_LABELS[mode]}）`;
+  elapsedEl.textContent = "0.0";
+  hide(quizEl);
+  hide(resultEl);
+  startBtn.disabled = true;
+  modeSelect.disabled = true;
+
+  if (mode === "scan") {
+    // さがし読み: 設問を先に見せ、本文と一緒に表示。選択で計測終了。
+    passageEl.textContent = passage.text;
+    show(passageEl);
+    hide(readBtn);
+    phase = "question";
+    startTimer();
+    renderQuestion();
+    show(quizEl);
+  } else {
+    // ざっくり/じっくり: 本文を読み、「読み終えた」で計測終了→設問
+    passageEl.textContent = passage.text;
+    show(passageEl);
+    show(readBtn);
+    readBtn.disabled = false;
+    phase = "reading";
+    startTimer();
+  }
+}
+
+function finishReading() {
+  if (phase !== "reading") return;
+  stopTimer();
+  hide(readBtn);
+  hide(passageEl); // 要旨・記憶から答えさせる（精読/スキミング）
+  phase = "question";
+  renderQuestion();
+  show(quizEl);
+}
+
+function renderQuestion() {
+  const q = qList[qIndex];
+  quizQuestionEl.textContent = q.ask;
+  quizChoicesEl.innerHTML = "";
+  q.choices.forEach((choice, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.addEventListener("click", () => answer(i), { once: true });
+    quizChoicesEl.appendChild(btn);
+  });
+  quizProgressEl.textContent = qList.length > 1 ? `設問 ${qIndex + 1} / ${qList.length}` : "";
+}
+
+function answer(choiceIndex) {
+  // scan は最初の選択時点で計測を止める
+  if (mode === "scan" && phase === "question" && qIndex === 0) stopTimer();
+
+  const q = qList[qIndex];
+  const correct = choiceIndex === q.answer;
+  if (correct) correctCount += 1;
+
+  [...quizChoicesEl.children].forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.answer) btn.classList.add("correct");
+    else if (i === choiceIndex) btn.classList.add("wrong");
+  });
+
+  qIndex += 1;
+  if (qIndex < qList.length) {
+    setTimeout(() => renderQuestion(), 700);
+  } else {
+    setTimeout(() => finishRound(), 700);
+  }
+}
+
+function finishRound() {
+  hide(quizEl);
+  phase = "done";
+  startBtn.disabled = false;
+  startBtn.textContent = "つぎへ";
+  modeSelect.disabled = false;
+
+  const chars = charCount(passage.text);
+  const cpm = cpmOf(chars, readMs);
+  const comprehended = correctCount === qList.length; // 全問正解で「理解できた」とみなす
+
+  // 記録更新
+  store.compTotal += qList.length;
+  store.compCorrect += correctCount;
+  store.rounds += 1;
+  let effCpm = 0;
+  if (comprehended) {
+    effCpm = cpm;
+    if (cpm > (store.best[mode] || 0)) store.best[mode] = cpm;
+  }
+  saveStore(store);
+
+  // 表示
+  cpmEl.textContent = String(cpm);
+  roundTimeEl.textContent = (readMs / 1000).toFixed(1);
+  roundCompEl.textContent = `${correctCount} / ${qList.length}${comprehended ? " ⭕" : ""}`;
+  effCpmEl.textContent = comprehended ? String(effCpm) : "—";
+  renderStore();
+
+  resultEl.className = "result " + (comprehended ? "good" : "warn");
+  resultEl.textContent = buildFeedback(mode, cpm, comprehended);
+  show(resultEl);
+}
+
+function buildFeedback(m, cpm, comprehended) {
+  if (!comprehended) {
+    if (m === "careful") {
+      return `理解が不十分でした（${cpm}文字/分）。精読は速さより理解が最優先。読み戻しながらていねいに。`;
+    }
+    if (m === "skim") {
+      return `要旨を取り違えました（${cpm}文字/分）。題と最初・最後の文、くり返す語に注目して全体像をつかもう。`;
+    }
+    return `見つけられませんでした（${(readMs / 1000).toFixed(1)}秒）。探す語をしぼってから本文を追おう。`;
+  }
+  // 理解できた場合のモード別コメント
+  if (m === "skim") {
+    return `要旨をつかめました！${cpm}文字/分。ざっくり読みはこのくらい速くてOK。細部は精読で。`;
+  }
+  if (m === "scan") {
+    return `見つけました！${(readMs / 1000).toFixed(1)}秒（${cpm}文字/分）。探す情報をしぼるほど速くなります。`;
+  }
+  return `しっかり理解できました！${cpm}文字/分。精読は速さより理解。読めたうえで速くなれば理想的。`;
+}
+
+// --- イベント ---
+modeSelect.addEventListener("change", () => {
+  tipEl.textContent = TIPS[modeSelect.value];
+});
+startBtn.addEventListener("click", () => {
+  startBtn.textContent = "スタート";
+  startRound();
+});
+readBtn.addEventListener("click", finishReading);
+
+// 初期表示
+tipEl.textContent = TIPS[modeSelect.value];
+renderStore();
+
+  </script>
+</body>
+</html>

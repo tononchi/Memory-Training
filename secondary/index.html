@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>速読・読解トレーニング（中高生むけ）</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <h1>速読・読解トレーニング</h1>
+    <p class="subtitle">中学生・高校生むけ｜目的に応じて「読み方」を使い分ける</p>
+
+    <section class="panel controls">
+      <label>
+        読み方（モード）
+        <select id="modeSelect">
+          <option value="skim">ざっくり読み（スキミング：要旨をつかむ）</option>
+          <option value="scan">さがし読み（スキャニング：情報を探す）</option>
+          <option value="careful">じっくり読み（精読：正確に理解する）</option>
+        </select>
+      </label>
+      <button id="startBtn">スタート</button>
+    </section>
+
+    <section class="panel tip-panel">
+      <div id="tip" class="tip">モードを選んで「スタート」を押してください。</div>
+    </section>
+
+    <section class="panel reading">
+      <div class="read-head">
+        <span id="passageTitle" class="passage-title"></span>
+        <span class="timer">時間: <span id="elapsed">0.0</span> 秒</span>
+      </div>
+      <div id="passage" class="passage hidden"></div>
+      <button id="readBtn" class="hidden">読み終えた</button>
+
+      <div id="quiz" class="quiz hidden">
+        <p id="quizQuestion" class="quiz-q"></p>
+        <div id="quizChoices" class="quiz-choices"></div>
+        <p id="quizProgress" class="quiz-progress"></p>
+      </div>
+
+      <div id="result" class="result hidden"></div>
+    </section>
+
+    <section class="panel stats">
+      <h2>記録</h2>
+      <div class="stat-grid">
+        <div>
+          <h3>このかい</h3>
+          <p>読速: <span id="cpm">—</span> 文字/分</p>
+          <p>時間: <span id="roundTime">—</span> 秒</p>
+          <p>理解: <span id="roundComp">—</span></p>
+          <p>有効読速: <span id="effCpm">—</span> <span class="muted">（理解できた時だけ記録）</span></p>
+        </div>
+        <div>
+          <h3>モード別ベスト有効読速</h3>
+          <p>ざっくり読み: <span id="bestSkim">—</span> 文字/分</p>
+          <p>さがし読み: <span id="bestScan">—</span> 文字/分</p>
+          <p>じっくり読み: <span id="bestCareful">—</span> 文字/分</p>
+          <p>通算 理解率: <span id="compRate">—</span>%（<span id="rounds">0</span>回）</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="note">
+      <p>
+        <strong>この訓練の考え方：</strong>研究では、中学生以降は「速く読む」こと自体より、
+        <strong>目的に応じた読速の使い分け（スキミング／スキャニング／精読）と読解方略</strong>、
+        そして<strong>理解の担保</strong>が有効とされています。
+        いわゆる高速提示型の“速読”は速度こそ上がりますが、精読の理解は向上しません
+        （だから本アプリは<strong>理解できた時だけ読速を記録</strong>します）。
+        根拠は <a href="../docs/reading-by-grade-band.md">docs/reading-by-grade-band.md</a> を参照。
+      </p>
+      <p><a href="../index.html">← 小学生むけ（よむよむスピードトレーニング）へ</a></p>
+    </footer>
+  </main>
+
+  <script src="passages.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

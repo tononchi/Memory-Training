@@ -9,36 +9,98 @@
 <body>
   <main class="app">
     <h1>🌈 よむよむスピードトレーニング</h1>
-    <p class="subtitle">小学校1〜2年生むけ</p>
+    <p class="subtitle">小学校1〜2年生むけ｜くりかえし よんで すらすらに</p>
 
     <section class="panel controls">
       <label>
-        がくねん
-        <select id="gradeSelect">
-          <option value="1">1ねんせい</option>
-          <option value="2">2ねんせい</option>
+        もんだい
+        <select id="setSelect">
+          <optgroup label="1ねんせい">
+            <option value="1-hiragana">ひらがな</option>
+            <option value="1-katakana">カタカナ入り</option>
+            <option value="1-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="2ねんせい">
+            <option value="2-hiragana">ひらがな</option>
+            <option value="2-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="3ねんせい">
+            <option value="3-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="4ねんせい">
+            <option value="4-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="5ねんせい">
+            <option value="5-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="6ねんせい">
+            <option value="6-kanji">かんじ入り</option>
+          </optgroup>
+          <optgroup label="おとな（こどもと いっしょに）">
+            <option value="adult">大人むけ（中学いじょうの 漢字）</option>
+          </optgroup>
         </select>
       </label>
       <label>
-        ひょうじスピード（ことば/ふん）
-        <input id="speedRange" type="range" min="80" max="240" step="20" value="120" />
-        <span id="speedValue">120</span>
+        くりかえす かいすう
+        <select id="repeatSelect">
+          <option value="2">2かい</option>
+          <option value="3" selected>3かい</option>
+          <option value="4">4かい</option>
+        </select>
+      </label>
+      <label>
+        おてほんスピード
+        <input id="modelRange" type="range" min="0.6" max="1.1" step="0.1" value="0.8" />
+        <span id="modelValue">ふつう</span>
       </label>
       <button id="startBtn">スタート！</button>
     </section>
 
     <section class="panel training">
-      <div class="timer">のこり: <span id="timeLeft">60</span>びょう</div>
-      <div id="passage" class="passage">スタートをおしてね！</div>
-      <button id="nextBtn" disabled>よめた！つぎへ</button>
+      <div class="train-head">
+        <div class="progress-line">
+          ぶん <span id="passageIndex">0</span>/<span id="passageTotal">0</span>
+          ・ くりかえし <span id="repeatIndex">0</span>/<span id="repeatTotal">0</span>
+          <span id="reviewTag" class="review-tag hidden">💫 ふくしゅう</span>
+        </div>
+        <div class="timer">じかん: <span id="elapsed">0</span>びょう</div>
+      </div>
+
+      <div id="passage" class="passage">スタートを おしてね！</div>
+
+      <div class="train-actions">
+        <button id="modelBtn" class="model-btn" disabled>🔊 おてほんを きく</button>
+        <button id="readBtn" disabled>よめた！</button>
+      </div>
+
+      <div id="feedback" class="feedback hidden">
+        <span class="feedback-q">すらすら よめた？</span>
+        <button id="fluentBtn" class="fluent">😄 すらすら</button>
+        <button id="stumbleBtn" class="stumble">😅 つっかえた</button>
+      </div>
+
+      <p id="improveNote" class="improve-note hidden"></p>
+
+      <div id="quiz" class="quiz hidden">
+        <p class="quiz-q" id="quizQuestion"></p>
+        <div class="quiz-choices" id="quizChoices"></div>
+        <p id="quizResult" class="quiz-result hidden"></p>
+      </div>
     </section>
 
     <section class="panel score">
-      <h2>スコア</h2>
-      <p>ポイント: <span id="score">0</span></p>
-      <p>れんぞくボーナス: <span id="combo">0</span></p>
-      <p>よんだぶん: <span id="count">0</span></p>
-      <p>きょうのほし: <span id="starsToday">0</span></p>
+      <h2>こんかいの きろく</h2>
+      <div class="score-grid">
+        <p>ポイント: <span id="score">0</span></p>
+        <p>れんぞく: <span id="combo">0</span></p>
+        <p>よんだぶん: <span id="count">0</span></p>
+        <p>よむ はやさ: <span id="wpm">0</span> ことば/ふん</p>
+        <p>すらすら度: <span id="accuracy">0</span>%</p>
+        <p>りかい: <span id="comprehension">0/0</span></p>
+        <p>きょうの ほし: <span id="starsToday">0</span></p>
+      </div>
+      <p class="hint">※ はやさは「きょうの じぶん」のきろく。きのうの じぶんと くらべて のびれば はなまる！</p>
     </section>
 
     <section class="panel streak">
@@ -48,8 +110,21 @@
       <p>ベストスコア: <span id="bestScore">0</span></p>
       <div id="badges" class="badges"></div>
     </section>
+
+    <footer class="note">
+      <p>
+        おうちの方・先生へ：本アプリは「反復読み（Repeated Reading）＋お手本提示＋理解確認」を軸に、
+        速度を強制せず<strong>正確さと理解を伴った“結果としての速さ”</strong>を育てる設計です。
+        教室・家庭では声に出す音読と内容確認の併用を推奨します。
+        設計根拠は <a href="docs/speed-reading-research.md">docs/speed-reading-research.md</a> を参照してください。
+      </p>
+    </footer>
   </main>
 
+  <script src="data/passages-grade1.js"></script>
+  <script src="data/passages-grade2.js"></script>
+  <script src="data/passages-grade3to6.js"></script>
+  <script src="data/passages-adult.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
